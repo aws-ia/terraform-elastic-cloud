@@ -9,24 +9,23 @@ terraform {
 
 provider "ec" {
   # Configuration options
-  apikey = ""
-
+  apikey = var.apikey
 }
 
 
 data "ec_stack" "latest" {
   version_regex = "latest"
-  region        = "us-east-1"
+  region        = var.region
 }
 
 resource "ec_deployment" "example_minimal" {
   # Optional name.
-  name = "my_example_deployment"
+  name = var.name
 
   # Mandatory fields
-  region                 = "us-east-1"
+  region                 = var.region
   version                = data.ec_stack.latest.version
-  deployment_template_id = "aws-io-optimized-v2"
+  deployment_template_id = var.deployment_template_id
 
   elasticsearch {}
 
