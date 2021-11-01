@@ -1,7 +1,6 @@
 variable "apikey" {
   type = string
   description = "Elastic API Key"
-  default     = "cWVYbm5ud0JaUTFVSEYwVFVMVFQ6eU92TEE3R2JTZC0xdnd5OFoydEFtdw=="
 }
 
 variable "alias" {
@@ -45,4 +44,14 @@ variable "region" {
   type = string
   description = "AWS Region"
   default = "us-east-1"
+}
+
+variable "autoscale" {
+  type = string
+  default = "true"
+}
+
+variable "zone_count" {
+  type = number
+  default = 1
 }

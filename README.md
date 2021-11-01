@@ -1,2 +1,13 @@
-> Note: This module is in alpha state and is likely to contain bugs and updates may introduce breaking changes. It is not recommended for production use at this time.
-# terraform-elastic-cloud
+# Deployment example
+
+This example shows how to deploy an Elastic Cloud deployment using Terraform.
+First, you initialize the instance by using some outputs as string variables within a bash script to create a user and an index.
+Then, you create a traffic filter (which allows all traffic) and attach it to the deployment.
+
+## Running the example
+
+To run the example, follow these steps:
+
+1. Build the provider by running `make install` from the main folder.
+2. Run `terrafrom init` to initialize your Terraform CLI.
+3. Run `terraform apply` to see how it works.
