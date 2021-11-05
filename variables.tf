@@ -59,3 +59,9 @@ variable "zone_count" {
 variable "sourceip" {
   default = "0.0.0.0/0"
 }
+
+variable "create_role_and_policy" {
+  description = "Create a new IAM role and policy if true"
+  type        = bool
+  default     = true
+}
