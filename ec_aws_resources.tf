@@ -1,4 +1,4 @@
-# S3
+# S3 Bucket
 resource "aws_s3_bucket" "es_s3" {
   bucket = "ec_bucket"
   acl    = "private"
@@ -16,7 +16,7 @@ resource "aws_s3_bucket_policy" "es_s3" {
   # Terraform expression's result to valid JSON syntax.
   policy = jsonencode({
     Version = "2012-10-17"
-    Id      = "ec_s3_policy"
+    Id      = "es_s3_policy"
     Statement = [
       {
         Sid       = "IPAllow"
@@ -37,8 +37,9 @@ resource "aws_s3_bucket_policy" "es_s3" {
   })
 }
 
-# IAM
+# IAM Role
 resource "aws_iam_role" "es_role" {
+  count = var.create_role_and_policy ? 1 : 0
   name  = "es_deploy_role"
   assume_role_policy = <<EOF
 {
@@ -47,7 +48,10 @@ resource "aws_iam_role" "es_role" {
     {
       "Effect": "Allow",
       "Principal": {
-        "Service": "codebuild.amazonaws.com"
+        "Service": [
+          "s3.amazonaws.com",
+          "ec2.amazonaws.com"
+        ]
       },
       "Action": "sts:AssumeRole"
     }
