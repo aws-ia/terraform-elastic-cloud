@@ -7,10 +7,19 @@ terraform {
       source  = "elastic/ec"
       version = "0.3.0"
     }
+    aws = {
+      source = "hashicorp/aws"
+      version = ">= 3.0"
+    }
   }
 }
 
 provider "ec" {
   # Configuration options
   apikey = var.apikey
+}
+
+provider "aws" {
+  profile = "default"
+  region  = var.region
 }
