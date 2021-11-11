@@ -19,6 +19,11 @@ resource "ec_deployment" "example_minimal" {
     autoscale = var.autoscale
   }
 
+  tags = {
+    owner     = "elastic cloud"
+    component = "search"
+  }
+
   kibana {}
 
   apm {}

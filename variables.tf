@@ -123,7 +123,8 @@ variable "root_block_device" {
 
 variable "ec2_name" {
   type = string
-  description = "Deployment Name"
+  description = "EC2 Name"
+  default = "single-instance"
 }
 
 variable "tags" {

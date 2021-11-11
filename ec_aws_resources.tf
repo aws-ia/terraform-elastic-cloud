@@ -1,6 +1,6 @@
 # S3 Bucket
 resource "aws_s3_bucket" "es_s3" {
-  bucket = "ec_bucket"
+  bucket = "es_bucket"
   acl    = "private"
 
   tags = {
@@ -65,7 +65,7 @@ resource "aws_iam_role_policy_attachment" "es_deploy" {
   policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
 }
 
-# EC2
+# EC2 Instance
 data "aws_caller_identity" "current" {}
 
 resource "aws_instance" "ec2_instance" {
@@ -93,4 +93,21 @@ resource "aws_instance" "ec2_instance" {
     }
 
     tags                        = merge({ "Name" = var.ec2_name }, var.tags)
+}
+
+resource "null_resource" "bootstrap_ec2_instance" {
+  provisioner "local-exec" {
+    command = data.template_file.install_elastic_agent.rendered
+  }
+}
+
+data "template_file" "install_elastic_agent" {
+  template   = file("install_elastic_agent.sh")
+  depends_on = [aws_instance.ec2_instance]
+  vars = {
+    # Created servers and appropriate AZs
+    elastic-user     = ec_deployment.example_minimal.elasticsearch_username
+    elastic-password = ec_deployment.example_minimal.elasticsearch_password
+    es-url           = ec_deployment.example_minimal.elasticsearch[0].https_endpoint
+  }
 }
