@@ -65,14 +65,16 @@ resource "aws_iam_role" "es_role" {
 EOF
 }
 
+#Attach IAM role
 resource "aws_iam_role_policy_attachment" "es_deploy" {
   role       = aws_iam_role.es_role[0].name
   policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
 }
 
-# EC2 Instance
+# AccountID
 data "aws_caller_identity" "current" {}
 
+# EC2 Instance
 resource "aws_instance" "ec2_instance" {
     ami                         = coalesce(var.ami, data.aws_ami.ubuntu.id)
     instance_type               = var.instance_type
