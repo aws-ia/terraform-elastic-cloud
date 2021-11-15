@@ -1,6 +1,17 @@
+locals {
+    aws_account_id = data.aws_caller_identity.current.account_id
+}
+
+# Default VPC
+resource "aws_default_vpc" "default" {
+  tags = {
+    Name = "Default VPC"
+  }
+}
+
 # S3 Bucket
 resource "aws_s3_bucket" "es_s3" {
-  bucket = "es_bucket"
+  bucket_prefix = var.bucket_prefix
   acl    = "private"
 
   tags = {
@@ -19,19 +30,13 @@ resource "aws_s3_bucket_policy" "es_s3" {
     Id      = "es_s3_policy"
     Statement = [
       {
-        Sid       = "IPAllow"
-        Effect    = "Deny"
-        Principal = "*"
+        Effect    = "Allow"
         Action    = "s3:*"
+        Principal = {"AWS":"${local.aws_account_id}"}
         Resource = [
           aws_s3_bucket.es_s3.arn,
           "${aws_s3_bucket.es_s3.arn}/*",
         ]
-        Condition = {
-          NotIpAddress = {
-            "aws:SourceIp" = "8.8.8.8/32"
-          }
-        }
       },
     ]
   })
@@ -69,7 +74,7 @@ resource "aws_iam_role_policy_attachment" "es_deploy" {
 data "aws_caller_identity" "current" {}
 
 resource "aws_instance" "ec2_instance" {
-    ami                         = var.ami
+    ami                         = coalesce(var.ami, data.aws_ami.ubuntu.id)
     instance_type               = var.instance_type
     key_name                    = var.key_name
     availability_zone           = var.availability_zone
@@ -92,7 +97,7 @@ resource "aws_instance" "ec2_instance" {
         }
     }
 
-    tags                        = merge({ "Name" = var.ec2_name }, var.tags)
+    tags                      = merge({ "Name" = var.ec2_name }, var.tags)
 }
 
 resource "null_resource" "bootstrap_ec2_instance" {
@@ -110,4 +115,20 @@ data "template_file" "install_elastic_agent" {
     elastic-password = ec_deployment.example_minimal.elasticsearch_password
     es-url           = ec_deployment.example_minimal.elasticsearch[0].https_endpoint
   }
+}
+
+data "aws_ami" "ubuntu" {
+  most_recent = true
+
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+
+  owners = ["099720109477"] # Canonical
 }

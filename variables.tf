@@ -48,7 +48,7 @@ variable "region" {
 
 variable "autoscale" {
   type = string
-  default = "true"
+  default = "false"
 }
 
 variable "zone_count" {
@@ -66,11 +66,17 @@ variable "create_role_and_policy" {
   default     = true
 }
 
+variable "bucket_prefix" {
+  description = "Creates a unique bucket name beginning with the specified prefix"
+  type        = string
+  default     = ""
+}
+
 # EC2
 variable "ami" {
   description = "AMI ID for the instance"
   type        = string
-  default     = ""
+  default     = null
 }
 
 variable "key_name" {

@@ -14,3 +14,7 @@ output "elasticsearch_password" {
 output "elasticsearch_cloud_id" {
   value = ec_deployment.example_minimal.elasticsearch[0].cloud_id
 }
+
+output "aws_account_id" {
+  value = local.aws_account_id
+}
