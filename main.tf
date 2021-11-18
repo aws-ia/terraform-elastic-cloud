@@ -34,17 +34,19 @@ resource "ec_deployment" "example_minimal" {
     }
   }
 }
-# Create a snapshot repository
+
+# Create a local snapshot repository and point to s3
 resource "elasticsearch_snapshot_repository" "repo" {
+  count = var.local_elasticsearch_url != "" ? 1 : 0
   name = "es-index-backups"
   type = "s3"
   settings = {
     bucket   = "es-index-backups"
     region   = var.region
-    role_arn = "arn:aws:iam::123456789012:role/MyElasticsearchRole"
   }
 }
 
+# Create an Elastic Cloud traffic filter
 resource "ec_deployment_traffic_filter" "allow_all" {
   name   = "Allow all ip addresses"
   type   = "ip"
