@@ -34,6 +34,16 @@ resource "ec_deployment" "example_minimal" {
     }
   }
 }
+# Create a snapshot repository
+resource "elasticsearch_snapshot_repository" "repo" {
+  name = "es-index-backups"
+  type = "s3"
+  settings = {
+    bucket   = "es-index-backups"
+    region   = var.region
+    role_arn = "arn:aws:iam::123456789012:role/MyElasticsearchRole"
+  }
+}
 
 resource "ec_deployment_traffic_filter" "allow_all" {
   name   = "Allow all ip addresses"

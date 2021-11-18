@@ -60,6 +60,11 @@ variable "sourceip" {
   default = "0.0.0.0/0"
 }
 
+variable "local_elasticsearch_url" {
+  description = "Create a local snapshot repo, provide the local elasticsearch url – e.g., http://127.0.0.1:9200"
+  default = ""
+}
+
 variable "create_role_and_policy" {
   description = "Create a new IAM role and policy if true"
   type        = bool

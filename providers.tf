@@ -11,6 +11,10 @@ terraform {
       source = "hashicorp/aws"
       version = ">= 3.0"
     }
+    elasticsearch = {
+      source = "phillbaker/elasticsearch"
+      version = "2.0.0-beta.2"
+    }
   }
 }
 
@@ -22,4 +26,8 @@ provider "ec" {
 provider "aws" {
   profile = "default"
   region  = var.region
+}
+
+provider "elasticsearch" {
+  url = var.local_elasticsearch_url
 }
