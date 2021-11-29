@@ -9,33 +9,91 @@ resource "aws_default_vpc" "default" {
   }
 }
 
-# S3 Bucket
-resource "aws_s3_bucket" "es_s3" {
-  bucket_prefix = var.bucket_prefix
-  acl    = "private"
+# SQS
+resource "aws_sqs_queue" "es_queue_deadletter" {
+  name = "es-queue-deadletter"
+  delay_seconds = 90
+  max_message_size = 2048
+  message_retention_seconds = 86400
+  receive_wait_time_seconds = 10
+}
 
+resource "aws_sqs_queue" "es_queue" {
+  name = "es-queue"
+  delay_seconds = 90
+  max_message_size = 2048
+  message_retention_seconds = 86400
+  receive_wait_time_seconds = 10
+  redrive_policy = jsonencode({
+    deadLetterTargetArn = aws_sqs_queue.es_queue_deadletter.arn
+    maxReceiveCount     = 4
+  })
   tags = {
-    Name        = "Elastic bucket"
+    Name        = "SQS Queue for Elasticsearch"
     Environment = "Dev"
   }
 }
 
-# S3 Policy
-resource "aws_s3_bucket_policy" "es_s3" {
-  bucket = aws_s3_bucket.es_s3.id
+# S3 Bucket for Elasticsearch snapshots
+resource "aws_s3_bucket" "es_s3_snapshot" {
+  bucket_prefix = var.bucket_prefix_snapshot
+  acl    = "private"
+
+  tags = {
+    Name        = "Bucket for Elasticsearch snapshots"
+    Environment = "Dev"
+  }
+}
+
+# S3 Bucket for Elastic Agent
+resource "aws_s3_bucket" "es_s3_agent" {
+  bucket_prefix = var.bucket_prefix_agent
+  acl    = "private"
+
+  tags = {
+    Name        = "Bucket for Elastic Agent"
+    Environment = "Dev"
+  }
+}
+
+# S3 Policy for bucket for snapshots
+resource "aws_s3_bucket_policy" "es_s3_snapshot" {
+  bucket = aws_s3_bucket.es_s3_snapshot.id
 
   # Terraform expression's result to valid JSON syntax.
   policy = jsonencode({
     Version = "2012-10-17"
-    Id      = "es_s3_policy"
+    Id      = "es_s3_snapshot_policy"
     Statement = [
       {
         Effect    = "Allow"
         Action    = "s3:*"
         Principal = {"AWS":"${local.aws_account_id}"}
         Resource = [
-          aws_s3_bucket.es_s3.arn,
-          "${aws_s3_bucket.es_s3.arn}/*",
+          aws_s3_bucket.es_s3_snapshot.arn,
+          "${aws_s3_bucket.es_s3_snapshot.arn}/*",
+        ]
+      },
+    ]
+  })
+}
+
+# S3 Policy for bucket for Agent
+resource "aws_s3_bucket_policy" "es_s3_agent" {
+  bucket = aws_s3_bucket.es_s3_agent.id
+
+  # Terraform expression's result to valid JSON syntax.
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Id      = "es_s3_agent_policy"
+    Statement = [
+      {
+        Effect    = "Allow"
+        Action    = "s3:*"
+        Principal = {"AWS":"${local.aws_account_id}"}
+        Resource = [
+          aws_s3_bucket.es_s3_agent.arn,
+          "${aws_s3_bucket.es_s3_agent.arn}/*",
         ]
       },
     ]
@@ -55,7 +113,8 @@ resource "aws_iam_role" "es_role" {
       "Principal": {
         "Service": [
           "s3.amazonaws.com",
-          "ec2.amazonaws.com"
+          "ec2.amazonaws.com",
+          "sqs.amazonaws.com"
         ]
       },
       "Action": "sts:AssumeRole"
@@ -113,9 +172,9 @@ data "template_file" "install_elastic_agent" {
   depends_on = [aws_instance.ec2_instance]
   vars = {
     # Created servers and appropriate AZs
-    elastic-user     = ec_deployment.example_minimal.elasticsearch_username
-    elastic-password = ec_deployment.example_minimal.elasticsearch_password
-    es-url           = ec_deployment.example_minimal.elasticsearch[0].https_endpoint
+    elastic-user     = ec_deployment.ec_minimal.elasticsearch_username
+    elastic-password = ec_deployment.ec_minimal.elasticsearch_password
+    es-url           = ec_deployment.ec_minimal.elasticsearch[0].https_endpoint
   }
 }
 

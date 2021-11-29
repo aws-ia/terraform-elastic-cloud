@@ -5,7 +5,7 @@ data "ec_stack" "latest" {
 }
 
 # Create an Elastic Cloud deployment
-resource "ec_deployment" "example_minimal" {
+resource "ec_deployment" "ec_minimal" {
   # Optional name
   name = var.name
 
@@ -35,14 +35,24 @@ resource "ec_deployment" "example_minimal" {
   }
 }
 
-# Create a local snapshot repository and point to s3
+# Create the keystore secret entry (if s3 access key is provided)
+resource "ec_deployment_elasticsearch_keystore" "secure_url" {
+  count = var.snapshot_s3_access_key_id != "" ? 1 : 0
+  deployment_id = ec_deployment.ec_minimal.id
+  setting_name  = var.snapshot_s3_access_key_id
+  value         = var.snapshot_s3_secret_access_key
+}
+
+# Create a local snapshot repository and point to s3 (if local es url is provided)
 resource "elasticsearch_snapshot_repository" "repo" {
   count = var.local_elasticsearch_url != "" ? 1 : 0
-  name = "es-index-backups"
+  depends_on = [aws_s3_bucket.es_s3_snapshot, aws_iam_role.es_role]
+  name = "local-es-index-backups"
   type = "s3"
   settings = {
-    bucket   = "es-index-backups"
+    bucket   = aws_s3_bucket.es_s3_snapshot.id
     region   = var.region
+    role_arn = aws_iam_role.es_role[0].arn
   }
 }
 

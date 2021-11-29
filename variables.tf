@@ -3,16 +3,6 @@ variable "apikey" {
   description = "Elastic API Key"
 }
 
-variable "alias" {
-  type = string
-  description = ""
-}
-
-variable "apm_secret_token" {
-  type = string
-  description = ""
-}
-
 variable "deployment_template_id" {
   type = string
   description = ""
@@ -21,12 +11,12 @@ variable "deployment_template_id" {
 
 variable "elasticsearch_password" {
   type = string
-  description = ""
+  default = ""
 }
 
 variable "elasticsearch_username" {
   type = string
-  description = ""
+  default = ""
 }
 
 variable "id" {
@@ -60,6 +50,18 @@ variable "sourceip" {
   default = "0.0.0.0/0"
 }
 
+variable "snapshot_s3_access_key_id" {
+  type = string
+  description = "Access Key ID for the s3 for snapshots"
+  default = ""
+}
+
+variable "snapshot_s3_secret_access_key" {
+  type = string
+  description = "Secret Access Key for the s3 for snapshots"
+  default = ""
+}
+
 variable "local_elasticsearch_url" {
   description = "Create a local snapshot repo, provide the local elasticsearch url – e.g., http://127.0.0.1:9200"
   default = ""
@@ -71,10 +73,16 @@ variable "create_role_and_policy" {
   default     = true
 }
 
-variable "bucket_prefix" {
+variable "bucket_prefix_snapshot" {
   description = "Creates a unique bucket name beginning with the specified prefix"
   type        = string
-  default     = ""
+  default     = "es-s3-snapshot"
+}
+
+variable "bucket_prefix_agent" {
+  description = "Creates a unique bucket name beginning with the specified prefix"
+  type        = string
+  default     = "es-s3-agent"
 }
 
 # EC2
