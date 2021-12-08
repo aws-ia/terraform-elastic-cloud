@@ -161,7 +161,9 @@ resource "aws_instance" "ec2_instance" {
     tags                      = merge({ "Name" = var.ec2_name }, var.tags)
 }
 
+
 resource "null_resource" "bootstrap_ec2_instance" {
+  depends_on = [aws_instance.ec2_instance]
   provisioner "local-exec" {
     command = data.template_file.install_elastic_agent.rendered
   }
@@ -169,7 +171,6 @@ resource "null_resource" "bootstrap_ec2_instance" {
 
 data "template_file" "install_elastic_agent" {
   template   = file("install_elastic_agent.sh")
-  depends_on = [aws_instance.ec2_instance]
   vars = {
     # Created servers and appropriate AZs
     elastic-user     = ec_deployment.ec_minimal.elasticsearch_username
@@ -177,6 +178,7 @@ data "template_file" "install_elastic_agent" {
     es-url           = ec_deployment.ec_minimal.elasticsearch[0].https_endpoint
   }
 }
+
 
 data "aws_ami" "ubuntu" {
   most_recent = true

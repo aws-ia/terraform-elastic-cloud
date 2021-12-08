@@ -18,9 +18,12 @@ resource "ec_deployment" "ec_minimal" {
   elasticsearch {
     autoscale = var.autoscale
 
+    /*
     snapshot_source {
-      source_elasticsearch_cluster_id = "<id-es-cluster>"
+      source_elasticsearch_cluster_id = "Y-zXzbHiScyMUk7FgTtN5w"
     }
+*/
+
   }
 
   tags = {
@@ -40,38 +43,69 @@ resource "ec_deployment" "ec_minimal" {
 }
 
 # Create a secure keystore for ec deployment to access a snapshot S3 bucket (if s3 access key is provided)
-resource "ec_deployment_elasticsearch_keystore" "secure_url" {
-  count = var.snapshot_s3_access_key_id != "" ? 1 : 0
-  depends_on = [aws_s3_bucket.es_s3_snapshot]
+resource "ec_deployment_elasticsearch_keystore" "access_key" {
+  count = var.s3_client_access_key != "" ? 1 : 0
   deployment_id = ec_deployment.ec_minimal.id
-  setting_name  = var.snapshot_s3_access_key_id
-  value         = var.snapshot_s3_secret_access_key
+  setting_name  = "s3.client.default.access_key"
+  value         = var.s3_client_access_key
 }
 
-# Create a local snapshot repository and point to an existing S3 bucket (if local es url is provided)
-resource "elasticsearch_snapshot_repository" "repo_existing_s3" {
-  count = var.local_elasticsearch_url != "" && var.existing_snapshot_s3_bucket_name != "" ? 1 : 0
-  name = var.snapshot_local_repo_name
+# Create a secure keystore for ec deployment to access a snapshot S3 bucket (if s3 access key is provided)
+resource "ec_deployment_elasticsearch_keystore" "secret_key" {
+  count = var.s3_client_secret_key != "" ? 1 : 0
+  deployment_id = ec_deployment.ec_minimal.id
+  setting_name  = "s3.client.default.secret_key"
+  value         = var.s3_client_secret_key
+}
+
+# Create a local repository and point to an S3 bucket (if local es url is provided)
+resource "elasticsearch_snapshot_repository" "create_local_repo" {
+  count = var.local_elasticsearch_url != "" ? 1 : 0
+  depends_on = [aws_iam_role.es_role]
+  name = var.local_elasticsearch_repo_name
   type = "s3"
   settings = {
-    bucket   = var.existing_snapshot_s3_bucket_name
+    bucket   = var.existing_snapshot_s3_bucket_name != "" ? var.existing_snapshot_s3_bucket_name : aws_s3_bucket.es_s3_snapshot.id
     region   = var.region
     role_arn = aws_iam_role.es_role.arn
   }
 }
 
-# Create a local snapshot repository and point to a new S3 bucket (if local es url is provided)
-resource "elasticsearch_snapshot_repository" "repo_new_s3" {
-  count = var.local_elasticsearch_url != "" && var.existing_snapshot_s3_bucket_name == "" ? 1 : 0
-  depends_on = [aws_s3_bucket.es_s3_snapshot, aws_iam_role.es_role]
-  name = var.snapshot_local_repo_name
-  type = "s3"
-  settings = {
-    bucket   = aws_s3_bucket.es_s3_snapshot.id
-    region   = var.region
-    role_arn = aws_iam_role.es_role.arn
+# Create a local one-off snapshot on the S3 repository (if local es url is provided)
+resource "null_resource" "create_snapshot" {
+  count = var.local_elasticsearch_url != "" ? 1 : 0
+  depends_on = [elasticsearch_snapshot_repository.create_local_repo]
+  provisioner "local-exec" {
+    command=<<EOT
+    curl -v XPUT   "${var.local_elasticsearch_url}/_snapshot/${var.local_elasticsearch_repo_name}/es-snapshot-${random_id.id.dec}?wait_for_completion=true" -H 'Content-Type: application/json' -d '
+{
+  "indices": "*",
+  "ignore_unavailable": true,
+  "include_global_state": false
+}
+'
+EOT
   }
 }
+
+# Create a repo on the cloud and points S3 bucket (if local es url is provided)
+resource "null_resource" "create_cloud_repo" {
+  depends_on = [null_resource.create_snapshot]
+  provisioner "local-exec" {
+    command=<<EOT
+    curl -v XPUT -u ${ec_deployment.ec_minimal.elasticsearch_username}:${ec_deployment.ec_minimal.elasticsearch_password}  "${ec_deployment.ec_minimal.elasticsearch[0].https_endpoint}/_snapshot/repository_${var.local_elasticsearch_repo_name}" -H 'Content-Type: application/json' -d '
+{
+  "type": "s3",
+  "settings": {
+    "bucket": "${aws_s3_bucket.es_s3_snapshot.id}",
+    "region": "${var.region}"
+  }
+}
+'
+EOT
+  }
+}
+
 
 # Create an Elastic Cloud traffic filter
 resource "ec_deployment_traffic_filter" "allow_all" {
@@ -82,4 +116,8 @@ resource "ec_deployment_traffic_filter" "allow_all" {
   rule {
     source = var.sourceip
   }
+}
+
+resource "random_id" "id" {
+	  byte_length = 8
 }
