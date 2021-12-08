@@ -20,10 +20,9 @@ resource "ec_deployment" "ec_minimal" {
 
     /*
     snapshot_source {
-      source_elasticsearch_cluster_id = "Y-zXzbHiScyMUk7FgTtN5w"
+      source_elasticsearch_cluster_id = "cluster_uuid"
     }
-*/
-
+    */
   }
 
   tags = {
@@ -88,7 +87,7 @@ EOT
   }
 }
 
-# Create a repo on the cloud and points S3 bucket (if local es url is provided)
+# Create a repo on Elastic Cloud and points to the S3 bucket
 resource "null_resource" "create_cloud_repo" {
   depends_on = [null_resource.create_snapshot]
   provisioner "local-exec" {
@@ -105,7 +104,6 @@ resource "null_resource" "create_cloud_repo" {
 EOT
   }
 }
-
 
 # Create an Elastic Cloud traffic filter
 resource "ec_deployment_traffic_filter" "allow_all" {
