@@ -17,6 +17,10 @@ resource "ec_deployment" "ec_minimal" {
 
   elasticsearch {
     autoscale = var.autoscale
+
+    snapshot_source {
+      source_elasticsearch_cluster_id = "<id-es-cluster>"
+    }
   }
 
   tags = {
@@ -35,24 +39,37 @@ resource "ec_deployment" "ec_minimal" {
   }
 }
 
-# Create the keystore secret entry (if s3 access key is provided)
+# Create a secure keystore for ec deployment to access a snapshot S3 bucket (if s3 access key is provided)
 resource "ec_deployment_elasticsearch_keystore" "secure_url" {
   count = var.snapshot_s3_access_key_id != "" ? 1 : 0
+  depends_on = [aws_s3_bucket.es_s3_snapshot]
   deployment_id = ec_deployment.ec_minimal.id
   setting_name  = var.snapshot_s3_access_key_id
   value         = var.snapshot_s3_secret_access_key
 }
 
-# Create a local snapshot repository and point to s3 (if local es url is provided)
-resource "elasticsearch_snapshot_repository" "repo" {
-  count = var.local_elasticsearch_url != "" ? 1 : 0
+# Create a local snapshot repository and point to an existing S3 bucket (if local es url is provided)
+resource "elasticsearch_snapshot_repository" "repo_existing_s3" {
+  count = var.local_elasticsearch_url != "" && var.existing_snapshot_s3_bucket_name != "" ? 1 : 0
+  name = var.snapshot_local_repo_name
+  type = "s3"
+  settings = {
+    bucket   = var.existing_snapshot_s3_bucket_name
+    region   = var.region
+    role_arn = aws_iam_role.es_role.arn
+  }
+}
+
+# Create a local snapshot repository and point to a new S3 bucket (if local es url is provided)
+resource "elasticsearch_snapshot_repository" "repo_new_s3" {
+  count = var.local_elasticsearch_url != "" && var.existing_snapshot_s3_bucket_name == "" ? 1 : 0
   depends_on = [aws_s3_bucket.es_s3_snapshot, aws_iam_role.es_role]
-  name = "local-es-index-backups"
+  name = var.snapshot_local_repo_name
   type = "s3"
   settings = {
     bucket   = aws_s3_bucket.es_s3_snapshot.id
     region   = var.region
-    role_arn = aws_iam_role.es_role[0].arn
+    role_arn = aws_iam_role.es_role.arn
   }
 }
 

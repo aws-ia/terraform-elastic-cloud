@@ -36,7 +36,7 @@ resource "aws_sqs_queue" "es_queue" {
 
 # S3 Bucket for Elasticsearch snapshots
 resource "aws_s3_bucket" "es_s3_snapshot" {
-  bucket_prefix = var.bucket_prefix_snapshot
+  bucket_prefix = var.snapshot_s3_bucket_prefix
   acl    = "private"
 
   tags = {
@@ -47,7 +47,7 @@ resource "aws_s3_bucket" "es_s3_snapshot" {
 
 # S3 Bucket for Elastic Agent
 resource "aws_s3_bucket" "es_s3_agent" {
-  bucket_prefix = var.bucket_prefix_agent
+  bucket_prefix = var.agent_s3_bucket_prefix
   acl    = "private"
 
   tags = {
@@ -102,8 +102,7 @@ resource "aws_s3_bucket_policy" "es_s3_agent" {
 
 # IAM Role
 resource "aws_iam_role" "es_role" {
-  count = var.create_role_and_policy ? 1 : 0
-  name  = "es_deploy_role"
+  name_prefix  = "es_deploy_role"
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -126,7 +125,8 @@ EOF
 
 #Attach IAM role
 resource "aws_iam_role_policy_attachment" "es_deploy" {
-  role       = aws_iam_role.es_role[0].name
+  depends_on = [aws_iam_role.es_role]
+  role       = aws_iam_role.es_role.name
   policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
 }
 

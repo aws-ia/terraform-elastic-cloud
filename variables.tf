@@ -9,14 +9,12 @@ variable "deployment_template_id" {
   default = "aws-io-optimized-v2"
 }
 
-variable "elasticsearch_password" {
-  type = string
-  default = ""
-}
-
 variable "elasticsearch_username" {
   type = string
-  default = ""
+}
+
+variable "elasticsearch_password" {
+  type = string
 }
 
 variable "id" {
@@ -50,39 +48,41 @@ variable "sourceip" {
   default = "0.0.0.0/0"
 }
 
+variable "existing_snapshot_s3_bucket_name" {
+  type = string
+  description = "Existing S3 bucket name for snapshots"
+}
+
 variable "snapshot_s3_access_key_id" {
   type = string
-  description = "Access Key ID for the s3 for snapshots"
-  default = ""
+  description = "Access Key ID for the S3 for snapshots"
 }
 
 variable "snapshot_s3_secret_access_key" {
   type = string
-  description = "Secret Access Key for the s3 for snapshots"
-  default = ""
+  description = "Secret Access Key for the S3 for snapshots"
 }
 
 variable "local_elasticsearch_url" {
   description = "Create a local snapshot repo, provide the local elasticsearch url – e.g., http://127.0.0.1:9200"
-  default = ""
 }
 
-variable "create_role_and_policy" {
-  description = "Create a new IAM role and policy if true"
-  type        = bool
-  default     = true
-}
-
-variable "bucket_prefix_snapshot" {
+variable "snapshot_s3_bucket_prefix" {
   description = "Creates a unique bucket name beginning with the specified prefix"
   type        = string
   default     = "es-s3-snapshot"
 }
 
-variable "bucket_prefix_agent" {
+variable "agent_s3_bucket_prefix" {
   description = "Creates a unique bucket name beginning with the specified prefix"
   type        = string
   default     = "es-s3-agent"
+}
+
+variable "snapshot_local_repo_name" {
+  description = "Creates a snapshot repository with the specified name"
+  type        = string
+  default     = "es-index-backups"
 }
 
 # EC2
