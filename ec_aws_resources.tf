@@ -38,6 +38,7 @@ resource "aws_sqs_queue" "es_queue" {
 resource "aws_s3_bucket" "es_s3_snapshot" {
   bucket_prefix = var.snapshot_s3_bucket_prefix
   acl    = "private"
+  force_destroy = true
 
   tags = {
     Name        = "Bucket for Elasticsearch snapshots"
@@ -49,6 +50,7 @@ resource "aws_s3_bucket" "es_s3_snapshot" {
 resource "aws_s3_bucket" "es_s3_agent" {
   bucket_prefix = var.agent_s3_bucket_prefix
   acl    = "private"
+  force_destroy = true
 
   tags = {
     Name        = "Bucket for Elastic Agent"

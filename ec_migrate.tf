@@ -42,7 +42,7 @@ resource "null_resource" "create_snapshot" {
   depends_on = [elasticsearch_snapshot_repository.create_local_repo]
   provisioner "local-exec" {
     command=<<EOT
-    curl -v XPUT   "${var.local_elasticsearch_url}/_snapshot/${var.local_elasticsearch_repo_name}/${local.es_snapshot_name}?wait_for_completion=true" -H 'Content-Type: application/json' -d '
+curl -v XPUT   "${var.local_elasticsearch_url}/_snapshot/${var.local_elasticsearch_repo_name}/${local.es_snapshot_name}?wait_for_completion=true" -H 'Content-Type: application/json' -d '
 {
   "indices": "*",
   "ignore_unavailable": true,
@@ -58,7 +58,7 @@ resource "null_resource" "create_cloud_repo" {
   depends_on = [null_resource.create_snapshot]
   provisioner "local-exec" {
     command=<<EOT
-    curl -v XPUT -u ${ec_deployment.ec_minimal.elasticsearch_username}:${ec_deployment.ec_minimal.elasticsearch_password}  "${ec_deployment.ec_minimal.elasticsearch[0].https_endpoint}/_snapshot/repository_${var.local_elasticsearch_repo_name}" -H 'Content-Type: application/json' -d '
+curl -v XPUT -u ${ec_deployment.ec_minimal.elasticsearch_username}:${ec_deployment.ec_minimal.elasticsearch_password}  "${ec_deployment.ec_minimal.elasticsearch[0].https_endpoint}/_snapshot/repository_${var.local_elasticsearch_repo_name}?wait_for_completion=true" -H 'Content-Type: application/json' -d '
 {
   "type": "s3",
   "settings": {
@@ -76,7 +76,8 @@ resource "null_resource" "restore_snapshot" {
   depends_on = [null_resource.create_cloud_repo]
   provisioner "local-exec" {
     command=<<EOT
-    curl -v XPOST -u ${ec_deployment.ec_minimal.elasticsearch_username}:${ec_deployment.ec_minimal.elasticsearch_password}  "${ec_deployment.ec_minimal.elasticsearch[0].https_endpoint}/_snapshot/${var.local_elasticsearch_repo_name}/${local.es_snapshot_name}/_restore" -H 'Content-Type: application/json' -d '
+curl -v XPOST -u ${ec_deployment.ec_minimal.elasticsearch_username}:${ec_deployment.ec_minimal.elasticsearch_password}  "${ec_deployment.ec_minimal.elasticsearch[0].https_endpoint}/*/_close?expand_wildcards=all&wait_for_completion=true"
+curl -v XPOST -u ${ec_deployment.ec_minimal.elasticsearch_username}:${ec_deployment.ec_minimal.elasticsearch_password}  "${ec_deployment.ec_minimal.elasticsearch[0].https_endpoint}/_snapshot/${var.local_elasticsearch_repo_name}/${local.es_snapshot_name}/_restore" -H 'Content-Type: application/json' -d '
 {
   "indices": "*,-.*"
 }
