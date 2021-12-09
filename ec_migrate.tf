@@ -7,6 +7,11 @@ resource "random_id" "id" {
 	  byte_length = 8
 }
 
+# Create a timer for creation
+resource "time_sleep" "wait_5_minutes" {
+  create_duration = "300s"
+}
+
 # Add an access key to Elastic Cloud keystore to access a snapshot S3 bucket (if s3 access key is provided)
 resource "ec_deployment_elasticsearch_keystore" "access_key" {
   count = var.s3_client_access_key != "" ? 1 : 0
@@ -42,23 +47,23 @@ resource "null_resource" "create_snapshot" {
   depends_on = [elasticsearch_snapshot_repository.create_local_repo]
   provisioner "local-exec" {
     command=<<EOT
-curl -v XPUT   "${var.local_elasticsearch_url}/_snapshot/${var.local_elasticsearch_repo_name}/${local.es_snapshot_name}?wait_for_completion=true" -H 'Content-Type: application/json' -d '
+curl -v XPUT "${var.local_elasticsearch_url}/_snapshot/${var.local_elasticsearch_repo_name}/${local.es_snapshot_name}?wait_for_completion=true" -H 'Content-Type: application/json' -d '
 {
   "indices": "*",
   "ignore_unavailable": true,
-  "include_global_state": false
+  "include_global_state": true
 }
 '
 EOT
   }
 }
 
-# Create a repo on Elastic Cloud and points to the S3 bucket
+# Create a repository on Elastic Cloud and points to the S3 bucket
 resource "null_resource" "create_cloud_repo" {
-  depends_on = [null_resource.create_snapshot]
+  depends_on = [ec_deployment.ec_minimal, null_resource.create_snapshot, time_sleep.wait_5_minutes]
   provisioner "local-exec" {
     command=<<EOT
-curl -v XPUT -u ${ec_deployment.ec_minimal.elasticsearch_username}:${ec_deployment.ec_minimal.elasticsearch_password}  "${ec_deployment.ec_minimal.elasticsearch[0].https_endpoint}/_snapshot/repository_${var.local_elasticsearch_repo_name}?wait_for_completion=true" -H 'Content-Type: application/json' -d '
+curl -v XPUT -u ${ec_deployment.ec_minimal.elasticsearch_username}:${ec_deployment.ec_minimal.elasticsearch_password}  "${ec_deployment.ec_minimal.elasticsearch[0].https_endpoint}/_snapshot/${var.local_elasticsearch_repo_name}" -H 'Content-Type: application/json' -d '
 {
   "type": "s3",
   "settings": {
@@ -71,17 +76,21 @@ EOT
   }
 }
 
-# Restore a snapshot on Elastic Cloud from the S3 bucket
+# Restore the Elastic Cloud cluster from the snapshot on S3 bucket
 resource "null_resource" "restore_snapshot" {
   depends_on = [null_resource.create_cloud_repo]
   provisioner "local-exec" {
-    command=<<EOT
-curl -v XPOST -u ${ec_deployment.ec_minimal.elasticsearch_username}:${ec_deployment.ec_minimal.elasticsearch_password}  "${ec_deployment.ec_minimal.elasticsearch[0].https_endpoint}/*/_close?expand_wildcards=all&wait_for_completion=true"
-curl -v XPOST -u ${ec_deployment.ec_minimal.elasticsearch_username}:${ec_deployment.ec_minimal.elasticsearch_password}  "${ec_deployment.ec_minimal.elasticsearch[0].https_endpoint}/_snapshot/${var.local_elasticsearch_repo_name}/${local.es_snapshot_name}/_restore" -H 'Content-Type: application/json' -d '
+    command=<<-EOT
+curl -v XPOST -u ${ec_deployment.ec_minimal.elasticsearch_username}:${ec_deployment.ec_minimal.elasticsearch_password}  "${ec_deployment.ec_minimal.elasticsearch[0].https_endpoint}/*/_close?expand_wildcards=all"
+curl -v XPOST -u ${ec_deployment.ec_minimal.elasticsearch_username}:${ec_deployment.ec_minimal.elasticsearch_password}  "${ec_deployment.ec_minimal.elasticsearch[0].https_endpoint}/_snapshot/${var.local_elasticsearch_repo_name}/${local.es_snapshot_name}/_restore?wait_for_completion=true" -H 'Content-Type: application/json' -d '
 {
-  "indices": "*,-.*"
-}
-'
+  "indices": "*",
+  "ignore_unavailable": true,
+  "include_global_state": true,
+  "rename_pattern": ".geoip_databases",
+  "rename_replacement": ".geoip_databases_.geoip_databases"
+}'
+curl -v XPOST -u ${ec_deployment.ec_minimal.elasticsearch_username}:${ec_deployment.ec_minimal.elasticsearch_password}  "${ec_deployment.ec_minimal.elasticsearch[0].https_endpoint}/*/_open?expand_wildcards=all"
 EOT
   }
 }
