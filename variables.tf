@@ -9,16 +9,6 @@ variable "deployment_template_id" {
   default = "aws-io-optimized-v2"
 }
 
-/*
-variable "es_user" {
-  type = string
-}
-
-variable "es_pwd" {
-  type = string
-}
-*/
-
 variable "id" {
   type = string
   description = ""
