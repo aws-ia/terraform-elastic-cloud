@@ -143,7 +143,7 @@ resource "aws_instance" "ec2_instance" {
     availability_zone           = var.availability_zone
     subnet_id                   = var.subnet_id
     vpc_security_group_ids      = var.vpc_security_group_ids
-    user_data                   = var.user_data
+    user_data                   = coalesce(var.user_data, data.template_file.install_elastic_agent.rendered)
     associate_public_ip_address = var.associate_public_ip_address
 
     dynamic "root_block_device" {
@@ -163,24 +163,9 @@ resource "aws_instance" "ec2_instance" {
     tags                      = merge({ "Name" = var.ec2_name }, var.tags)
 }
 
-
-resource "null_resource" "bootstrap_ec2_instance" {
-  depends_on = [aws_instance.ec2_instance]
-  provisioner "local-exec" {
-    command = data.template_file.install_elastic_agent.rendered
-  }
-}
-
 data "template_file" "install_elastic_agent" {
   template   = file("install_elastic_agent.sh")
-  vars = {
-    # Created servers and appropriate AZs
-    elastic-user     = ec_deployment.ec_minimal.elasticsearch_username
-    elastic-password = ec_deployment.ec_minimal.elasticsearch_password
-    es-url           = ec_deployment.ec_minimal.elasticsearch[0].https_endpoint
-  }
 }
-
 
 data "aws_ami" "ubuntu" {
   most_recent = true

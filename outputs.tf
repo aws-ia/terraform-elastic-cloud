@@ -4,6 +4,7 @@ output "elasticsearch_https_endpoint" {
 
 output "elasticsearch_username" {
   value = ec_deployment.ec_minimal.elasticsearch_username
+  sensitive = true
 }
 
 output "elasticsearch_password" {
@@ -13,8 +14,10 @@ output "elasticsearch_password" {
 
 output "elasticsearch_cloud_id" {
   value = ec_deployment.ec_minimal.elasticsearch[0].cloud_id
+  sensitive = true
 }
 
 output "aws_account_id" {
   value = local.aws_account_id
+  sensitive = true
 }
