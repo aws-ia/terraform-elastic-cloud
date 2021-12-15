@@ -29,6 +29,18 @@ restore_snapshot_ec() {
   }'
 }
 
+rename_geoip_index_ec() {
+  curl -v --user ${ec-user}:${ec-pwd} -XPOST ${ec-url}/_reindex?wait_for_completion=true -H 'Content-Type: application/json' -d '
+  {
+    "source": {
+      "index": ".geoip_databases_.geoip_databases"
+    },
+    "dest": {
+      "index": ".geoip_databases"
+    }
+  }'
+}
+
 open_indexes_ec() {
   curl -v --user ${ec-user}:${ec-pwd} -XPOST ${ec-url}/*/_open?expand_wildcards=all
 }
@@ -37,6 +49,7 @@ _main() {
  check_repo_ec
  close_indexes_ec
  restore_snapshot_ec
+ rename_geoip_index_ec
  open_indexes_ec
 }
 

@@ -1,10 +1,10 @@
 locals {
-    es_snapshot_name = "es-snapshot-${random_id.id.dec}"
+  es_snapshot_name = "es-snapshot-${random_id.id.dec}"
 }
 
 # Create a random id
 resource "random_id" "id" {
-	  byte_length = 8
+  byte_length = 8
 }
 
 # Add an access key to Elastic Cloud keystore to access a snapshot S3 bucket (if s3 access key is provided)
