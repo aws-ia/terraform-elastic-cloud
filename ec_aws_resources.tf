@@ -40,6 +40,22 @@ resource "aws_sqs_queue" "es_queue" {
 resource "aws_s3_bucket" "es_s3_log" {
   bucket_prefix = var.log_s3_bucket_prefix
   acl    = "log-delivery-write"
+  force_destroy = true
+
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        sse_algorithm     = "AES256"
+      }
+    }
+  }
+}
+
+# S3 public access block for Elasticsearch snapshot
+resource "aws_s3_bucket_public_access_block" "es_s3_log" {
+  bucket = aws_s3_bucket.es_s3_log.id
+  block_public_acls = true
+  block_public_policy = true
 }
 
 # S3 Bucket for Elasticsearch snapshot
@@ -96,7 +112,8 @@ resource "aws_s3_bucket_policy" "es_s3_snapshot" {
 # S3 public access block for Elasticsearch snapshot
 resource "aws_s3_bucket_public_access_block" "es_s3_snapshot" {
   bucket = aws_s3_bucket.es_s3_snapshot.id
-  restrict_public_buckets = true
+  block_public_acls = true
+  block_public_policy = true
 }
 
 # S3 Bucket for Elastic Agent
@@ -153,7 +170,8 @@ resource "aws_s3_bucket_policy" "es_s3_agent" {
 # S3 public access block for Elastic Agent
 resource "aws_s3_bucket_public_access_block" "es_s3_agent" {
   bucket = aws_s3_bucket.es_s3_agent.id
-  restrict_public_buckets = true
+  block_public_acls = true
+  block_public_policy = true
 }
 
 # IAM Role
