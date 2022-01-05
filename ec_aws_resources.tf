@@ -49,6 +49,10 @@ resource "aws_s3_bucket" "es_s3_log" {
       }
     }
   }
+
+  versioning {
+    enabled = true
+  }
 }
 
 # S3 public access block for Elasticsearch snapshot
@@ -56,6 +60,8 @@ resource "aws_s3_bucket_public_access_block" "es_s3_log" {
   bucket = aws_s3_bucket.es_s3_log.id
   block_public_acls = true
   block_public_policy = true
+  restrict_public_buckets = true
+  ignore_public_acls = true
 }
 
 # S3 Bucket for Elasticsearch snapshot
@@ -114,6 +120,8 @@ resource "aws_s3_bucket_public_access_block" "es_s3_snapshot" {
   bucket = aws_s3_bucket.es_s3_snapshot.id
   block_public_acls = true
   block_public_policy = true
+  restrict_public_buckets = true
+  ignore_public_acls = true
 }
 
 # S3 Bucket for Elastic Agent
@@ -172,6 +180,8 @@ resource "aws_s3_bucket_public_access_block" "es_s3_agent" {
   bucket = aws_s3_bucket.es_s3_agent.id
   block_public_acls = true
   block_public_policy = true
+  restrict_public_buckets = true
+  ignore_public_acls = true
 }
 
 # IAM Role
