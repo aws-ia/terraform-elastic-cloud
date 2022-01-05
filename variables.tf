@@ -65,6 +65,12 @@ variable "local_elasticsearch_repo_name" {
   default     = "es-index-backups"
 }
 
+variable "log_s3_bucket_prefix" {
+  description = "Creates a unique bucket name beginning with the specified prefix"
+  type        = string
+  default     = "es-s3-log"
+}
+
 variable "snapshot_s3_bucket_prefix" {
   description = "Creates a unique bucket name beginning with the specified prefix"
   type        = string

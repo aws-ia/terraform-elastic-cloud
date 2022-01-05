@@ -12,6 +12,7 @@ resource "aws_default_vpc" "default" {
 # SQS
 resource "aws_sqs_queue" "es_queue_deadletter" {
   name = "es-queue-deadletter"
+  sqs_managed_sse_enabled = true
   delay_seconds = 90
   max_message_size = 2048
   message_retention_seconds = 86400
@@ -20,6 +21,7 @@ resource "aws_sqs_queue" "es_queue_deadletter" {
 
 resource "aws_sqs_queue" "es_queue" {
   name = "es-queue"
+  sqs_managed_sse_enabled = true
   delay_seconds = 90
   max_message_size = 2048
   message_retention_seconds = 86400
@@ -30,35 +32,46 @@ resource "aws_sqs_queue" "es_queue" {
   })
   tags = {
     Name        = "SQS Queue for Elasticsearch"
-    Environment = "Dev"
+    Environment = "Development"
   }
 }
 
-# S3 Bucket for Elasticsearch snapshots
+# S3 Bucket for logging
+resource "aws_s3_bucket" "es_s3_log" {
+  bucket_prefix = var.log_s3_bucket_prefix
+  acl    = "log-delivery-write"
+}
+
+# S3 Bucket for Elasticsearch snapshot
 resource "aws_s3_bucket" "es_s3_snapshot" {
   bucket_prefix = var.snapshot_s3_bucket_prefix
   acl    = "private"
   force_destroy = true
 
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        sse_algorithm     = "AES256"
+      }
+    }
+  }
+
+  versioning {
+    enabled = true
+  }
+
+  logging {
+    target_bucket = aws_s3_bucket.es_s3_log.id
+    target_prefix = "s3_snapshot_log/"
+  }
+
   tags = {
     Name        = "Bucket for Elasticsearch snapshots"
-    Environment = "Dev"
+    Environment = "Development"
   }
 }
 
-# S3 Bucket for Elastic Agent
-resource "aws_s3_bucket" "es_s3_agent" {
-  bucket_prefix = var.agent_s3_bucket_prefix
-  acl    = "private"
-  force_destroy = true
-
-  tags = {
-    Name        = "Bucket for Elastic Agent"
-    Environment = "Dev"
-  }
-}
-
-# S3 Policy for bucket for snapshots
+# S3 Policy for bucket for Elasticsearch snapshot
 resource "aws_s3_bucket_policy" "es_s3_snapshot" {
   bucket = aws_s3_bucket.es_s3_snapshot.id
 
@@ -80,7 +93,42 @@ resource "aws_s3_bucket_policy" "es_s3_snapshot" {
   })
 }
 
-# S3 Policy for bucket for Agent
+# S3 public access block for Elasticsearch snapshot
+resource "aws_s3_bucket_public_access_block" "es_s3_snapshot" {
+  bucket = aws_s3_bucket.es_s3_snapshot.id
+  restrict_public_buckets = true
+}
+
+# S3 Bucket for Elastic Agent
+resource "aws_s3_bucket" "es_s3_agent" {
+  bucket_prefix = var.agent_s3_bucket_prefix
+  acl    = "private"
+  force_destroy = true
+
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        sse_algorithm     = "AES256"
+      }
+    }
+  }
+
+  versioning {
+    enabled = true
+  }
+
+  logging {
+    target_bucket = aws_s3_bucket.es_s3_log.id
+    target_prefix = "s3_agent_log/"
+  }
+
+  tags = {
+    Name        = "Bucket for Elastic Agent"
+    Environment = "Development"
+  }
+}
+
+# S3 Policy for bucket for Elastic Agent
 resource "aws_s3_bucket_policy" "es_s3_agent" {
   bucket = aws_s3_bucket.es_s3_agent.id
 
@@ -100,6 +148,12 @@ resource "aws_s3_bucket_policy" "es_s3_agent" {
       },
     ]
   })
+}
+
+# S3 public access block for Elastic Agent
+resource "aws_s3_bucket_public_access_block" "es_s3_agent" {
+  bucket = aws_s3_bucket.es_s3_agent.id
+  restrict_public_buckets = true
 }
 
 # IAM Role
@@ -146,6 +200,11 @@ resource "aws_instance" "ec2_instance" {
     user_data                   = coalesce(var.user_data, data.template_file.install_elastic_agent.rendered)
     associate_public_ip_address = var.associate_public_ip_address
 
+    metadata_options {
+        http_endpoint               = "enabled"
+        http_put_response_hop_limit = 1
+        http_tokens                 = "required"
+    }
     dynamic "root_block_device" {
         for_each = var.root_block_device
         content {
