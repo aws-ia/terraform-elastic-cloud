@@ -2,13 +2,6 @@ locals {
     aws_account_id = data.aws_caller_identity.current.account_id
 }
 
-# Default VPC
-resource "aws_default_vpc" "default" {
-  tags = {
-    Name = "Default VPC"
-  }
-}
-
 # SQS
 resource "aws_sqs_queue" "es_queue_deadletter" {
   name = "es-queue-deadletter"
@@ -26,10 +19,12 @@ resource "aws_sqs_queue" "es_queue" {
   max_message_size = 2048
   message_retention_seconds = 86400
   receive_wait_time_seconds = 10
+
   redrive_policy = jsonencode({
     deadLetterTargetArn = aws_sqs_queue.es_queue_deadletter.arn
     maxReceiveCount     = 4
   })
+
   tags = {
     Name        = "SQS Queue for Elasticsearch"
     Environment = "Development"
@@ -52,6 +47,11 @@ resource "aws_s3_bucket" "es_s3_log" {
 
   versioning {
     enabled = true
+  }
+
+  tags = {
+    Name        = "Bucket for logging"
+    Environment = "Development"
   }
 }
 
@@ -233,6 +233,7 @@ resource "aws_instance" "ec2_instance" {
         http_put_response_hop_limit = 1
         http_tokens                 = "required"
     }
+
     dynamic "root_block_device" {
         for_each = var.root_block_device
         content {
