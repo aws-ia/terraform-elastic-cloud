@@ -1,38 +1,47 @@
-terraform {
-  required_providers {
-    ec = {
-      source = "elastic/ec"
-      version = "0.3.0"
-    }
-  }
-}
-
-provider "ec" {
-  # Configuration options
-  apikey = ""
-
-}
-
-
+# Retrieve the latest stack pack version
 data "ec_stack" "latest" {
   version_regex = "latest"
-  region        = "us-east-1"
+  region        = var.region
 }
 
-resource "ec_deployment" "example_minimal" {
-  # Optional name.
-  name = "my_example_deployment"
+# Create an Elastic Cloud deployment
+resource "ec_deployment" "ec_minimal" {
+  # Optional name
+  name = var.name
 
   # Mandatory fields
-  region                 = "us-east-1"
+  region                 = var.region
   version                = data.ec_stack.latest.version
-  deployment_template_id = "aws-io-optimized-v2"
+  deployment_template_id = var.deployment_template_id
+  traffic_filter         = [ec_deployment_traffic_filter.allow_all.id]
 
-  elasticsearch {}
+  elasticsearch {
+    autoscale = var.autoscale
+  }
+
+  tags = {
+    owner     = "elastic cloud"
+    component = "search"
+  }
 
   kibana {}
 
   apm {}
 
-  enterprise_search {}
+  enterprise_search {
+    topology {
+      zone_count = var.zone_count
+    }
+  }
+}
+
+# Create an Elastic Cloud traffic filter
+resource "ec_deployment_traffic_filter" "allow_all" {
+  name   = "Allow all ip addresses"
+  type   = "ip"
+  region = var.region
+
+  rule {
+    source = var.sourceip
+  }
 }
