@@ -39,8 +39,8 @@ Terraform module for automating deployment of Elastic Cloud with added migration
 If `var.local_elasticsearch_url` is provided with a value (e.g., http://127.0.0.1:9200), the quick start will migrate the self-managed Elasticsearch cluster data with the following high-level steps:
 - Creates and registers an Elastic Cloud snapshot repository by using Amazon S3 service
 - Creates and configures a local snapshot repository and point to the Amazon S3 bucket
-- Closes all indices in Elasticsearch Cloud
 - Creates a new snapshot from the local cluster and store it in the Amazon S3 bucket
+- Closes all indices in Elasticsearch Cloud
 - Restores the local cluster data from the snapshot in Elasticsearch Cloud
 - Open all indices in Elasticsearch Cloud
 
