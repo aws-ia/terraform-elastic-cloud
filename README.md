@@ -1,13 +1,49 @@
-# Deployment example
+# *** DEVELOPER PREVIEW ONLY ***
 
-This example shows how to deploy an Elastic Cloud deployment using Terraform.
-First, you initialize the instance by using some outputs as string variables within a bash script to create a user and an index.
-Then, you create a traffic filter (which allows all traffic) and attach it to the deployment.
+## Terraform For Elastic Cloud on AWS
+Terraform module for automating deployment of Elastic Cloud with added migration capabilities.
 
-## Running the example
+## Supported Features
+- Provisioning Elastic Cloud cluster on AWS
+- Migrating Elasticsearch cluster data from self-managed Elasticsearch to Elastic Cloud
 
-To run the example, follow these steps:
+## Prerequisites
 
-1. Build the provider by running `make install` from the main folder.
-2. Run `terrafrom init` to initialize your Terraform CLI.
-3. Run `terraform apply` to see how it works.
+- [Terraform](https://www.terraform.io/downloads.html) 0.13+
+- Elasticsearch API key (`var.apikey`)
+- AWS access key (`var.s3_client_access_key, var.s3_client_secret_key`)
+
+## Architectural Diagram
+![](docs/images/architectural_diagram.png)
+
+## Deployment Steps
+1. Install Terraform. For instructions and a video tutorial, see [Install Terraform](https://learn.hashicorp.com/tutorials/terraform/install-cli). 
+2. Clone this **aws-ia/terraform-elastic-cloud** repository using the following command:
+   `git clone https://github.com/aws-ia/terraform-elastic-cloud`
+3. Change directory to the root repository directory: 
+   `cd terraform-elastic-cloud/`
+4. Generate an Elasticsearch Service (ESS) API Key:
+   1. Open your browser and navigate to <https://cloud.elastic.co/login>.
+   2. Log in with your email and password.
+   3. Click on [Elasticsearch Service](https://cloud.elastic.co/deployments).
+   4. Navigate to [Features > API Keys](https://cloud.elastic.co/deployment-features/keys) and click on **Generate API Key**.
+   5. Choose a name for your API key.
+   6. Save your API key somewhere safe
+5. Run Terraform by using the following commands:
+    ```
+   terraform init
+   terraform apply
+    ```
+   
+## Migration Steps
+If the variable "local_elasticsearch_url" is provided with a value (e.g., http://127.0.0.1:9200), the quick start will migrate the self-managed Elasticsearch cluster data with the following the high-level steps:
+- Creates and registers an Elastic Cloud snapshot repository by using Amazon S3 service
+- Creates and configures a local snapshot repository and point to the Amazon S3 bucket
+- Closes all indices in Elasticsearch Cloud
+- Creates a new snapshot from the local cluster and store it in the Amazon S3 bucket
+- Restores the local cluster data from the snapshot in Elasticsearch Cloud
+- Open all indices in Elasticsearch Cloud
+
+## Authors and Contributors
+   
+Battulga Purevragchaa (batpur@amazon.com), Uday Theepireddy (udayasimha.theepireddy@elastic.co) and [other contributors](https://github.com/aws-ia/terraform-elastic-cloud/graphs/contributors).
