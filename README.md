@@ -1,6 +1,6 @@
 > # DEVELOPER PREVIEW ONLY
 
-## Terraform For Elastic Cloud on AWS
+## Terraform for Elastic Cloud on AWS
 Terraform module for automating deployment of Elastic Cloud with added migration capabilities.
 
 ## Supported Features
