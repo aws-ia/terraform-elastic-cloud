@@ -5,6 +5,7 @@ Terraform module for automating deployment of Elastic Cloud with added migration
 
 ## Supported Features
 - Provisioning Elastic Cloud cluster on AWS
+- Provisioning AWS resources needed for [Elastic Agent](https://www.elastic.co/elastic-agent)
 - Migrating Elasticsearch cluster data from self-managed Elasticsearch to Elastic Cloud
 
 ## Prerequisites
