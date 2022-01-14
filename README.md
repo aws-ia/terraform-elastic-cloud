@@ -35,7 +35,12 @@ Terraform module for automating deployment of Elastic Cloud with added migration
    terraform init
    terraform apply
     ```
-   
+## Migration Methods
+
+- Snapshot and Restore
+- Reindex from Remote Cluster  
+- Index data from the original source and age-out old data
+
 ## Migration Steps
 If `var.local_elasticsearch_url` is provided with a value (e.g., http://127.0.0.1:9200), the quick start will migrate the self-managed Elasticsearch cluster data with the following high-level steps:
 - Creates and registers an Elastic Cloud snapshot repository by using Amazon S3 service
@@ -47,4 +52,4 @@ If `var.local_elasticsearch_url` is provided with a value (e.g., http://127.0.0.
 
 ## Authors and Contributors
    
-Battulga Purevragchaa (batpur@amazon.com), Uday Theepireddy (udayasimha.theepireddy@elastic.co) and [other contributors](https://github.com/aws-ia/terraform-elastic-cloud/graphs/contributors).
+Battulga Purevragchaa (batpur@amazon.com), Uday Theepireddy (Uday@elastic.co) and [other contributors](https://github.com/aws-ia/terraform-elastic-cloud/graphs/contributors).
