@@ -2,9 +2,26 @@ locals {
     aws_account_id = data.aws_caller_identity.current.account_id
 }
 
+# Secrets Manager
+resource "aws_secretsmanager_secret" "es_secrets" {
+  name = "es_secrets"
+  depends_on = [ec_deployment.ec_minimal]
+}
+
+resource "aws_secretsmanager_secret_version" "es_credentials" {
+  secret_id = aws_secretsmanager_secret.es_secrets.id
+  secret_string = <<EOF
+  {
+    "elasticsearch_username": "${ec_deployment.ec_minimal.elasticsearch_username}",
+    "elasticsearch_password": "${ec_deployment.ec_minimal.elasticsearch_password}"
+  }
+EOF
+  depends_on = [aws_secretsmanager_secret.es_secrets]
+}
+
 # SQS
 resource "aws_sqs_queue" "es_queue_deadletter" {
-  name = "es-queue-deadletter"
+  name = "es_queue_deadletter"
   sqs_managed_sse_enabled = true
   delay_seconds = 90
   max_message_size = 2048
@@ -13,7 +30,7 @@ resource "aws_sqs_queue" "es_queue_deadletter" {
 }
 
 resource "aws_sqs_queue" "es_queue" {
-  name = "es-queue"
+  name = "es_queue"
   sqs_managed_sse_enabled = true
   delay_seconds = 90
   max_message_size = 2048
@@ -207,7 +224,7 @@ resource "aws_iam_role" "es_role" {
 EOF
 }
 
-#Attach IAM role
+# Attach IAM role
 resource "aws_iam_role_policy_attachment" "es_deploy" {
   depends_on = [aws_iam_role.es_role]
   role       = aws_iam_role.es_role.name

@@ -1,5 +1,6 @@
 locals {
   es_snapshot_name = "es-snapshot-${random_id.id.dec}"
+  es_credentials = jsondecode(aws_secretsmanager_secret_version.es_credentials.secret_string)
 }
 
 # Create a random id
@@ -86,8 +87,8 @@ resource "null_resource" "restore_snapshot" {
 data "template_file" "run_rest_api" {
   template   = file("ec_rest_api.sh")
   vars = {
-    ec-user     = ec_deployment.ec_minimal.elasticsearch_username
-    ec-pwd      = ec_deployment.ec_minimal.elasticsearch_password
+    ec-user     = local.es_credentials.elasticsearch_username
+    ec-pwd      = local.es_credentials.elasticsearch_password
     ec-url      = ec_deployment.ec_minimal.elasticsearch[0].https_endpoint
     ec-repo     = var.local_elasticsearch_repo_name
     ec-snapshot = local.es_snapshot_name

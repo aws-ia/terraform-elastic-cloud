@@ -4,12 +4,11 @@
 Terraform module for automating deployment of Elastic Cloud with added migration capabilities.
 
 ## Supported Features
-- Provisioning Elastic Cloud cluster on AWS
+- Provisioning [Elastic Cloud](https://www.elastic.co/cloud/) cluster on AWS
 - Provisioning AWS resources needed for [Elastic Agent](https://www.elastic.co/elastic-agent)
 - Migrating Elasticsearch cluster data from self-managed Elasticsearch to Elastic Cloud
 
 ## Prerequisites
-
 - [Terraform](https://www.terraform.io/downloads.html) 0.13+
 - Elasticsearch API key (`var.apikey`)
 - AWS access key (`var.s3_client_access_key, var.s3_client_secret_key`)
@@ -30,7 +29,12 @@ Terraform module for automating deployment of Elastic Cloud with added migration
    4. Navigate to [Features > API Keys](https://cloud.elastic.co/deployment-features/keys) and click on **Generate API Key**.
    5. Choose a name for your API key.
    6. Save your API key somewhere safe
-5. Run Terraform by using the following commands:
+5. Create an AWS access key
+   1. Create an S3 bucket policy allows List, Read, Write permissions
+   2. Create an IAM user and attach the policy created above
+   3. Ensure to check `Programmatic access` for the IAM user
+   4. Save your AWS access key somewhere safe
+6. Run Terraform by using the following commands and provide the keys:
     ```
    terraform init
    terraform apply
