@@ -1,5 +1,5 @@
 terraform {
-  # The Elastic Cloud provider is supported from ">=0.12"
+  # The Elastic Cloud provider is supported from ">=0.13"
   # Version later than 0.13 is required for this terraform block to work
   required_version = ">= 0.13"
   required_providers {
@@ -9,7 +9,7 @@ terraform {
     }
     aws = {
       source = "hashicorp/aws"
-      version = ">= 3.70.0"
+      version = ">= 3.73.0"
     }
     random = {
       source = "hashicorp/random"
