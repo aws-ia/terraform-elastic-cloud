@@ -4,7 +4,7 @@ locals {
 
 # Secrets Manager
 resource "aws_secretsmanager_secret" "es_secrets" {
-  name = "es_secrets"
+  name_prefix = "es_secrets"
   depends_on = [ec_deployment.ec_minimal]
 }
 
