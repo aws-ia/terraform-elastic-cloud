@@ -1,6 +1,5 @@
 locals {
   es_snapshot_name = "es-snapshot-${random_id.id.dec}"
-  es_credentials = jsondecode(aws_secretsmanager_secret_version.es_credentials.secret_string)
 }
 
 # Create a random id
@@ -10,18 +9,18 @@ resource "random_id" "id" {
 
 # Add an access key to Elastic Cloud keystore to access a snapshot S3 bucket (if s3 access key is provided)
 resource "ec_deployment_elasticsearch_keystore" "access_key" {
-  count = var.s3_client_access_key != "" ? 1 : 0
+  count = local.aws_access_key != "" ? 1 : 0
   deployment_id = ec_deployment.ec_minimal.id
   setting_name  = "s3.client.default.access_key"
-  value         = var.s3_client_access_key
+  value         =  local.aws_access_key
 }
 
 # Add a secret key to Elastic Cloud keystore to access a snapshot S3 bucket (if s3 access key is provided)
 resource "ec_deployment_elasticsearch_keystore" "secret_key" {
-  count = var.s3_client_secret_key != "" ? 1 : 0
+  count = local.aws_secret_key != "" ? 1 : 0
   deployment_id = ec_deployment.ec_minimal.id
   setting_name  = "s3.client.default.secret_key"
-  value         = var.s3_client_secret_key
+  value         = local.aws_secret_key
 }
 
 # Create a local repository and point to an S3 bucket (if local es url is provided)

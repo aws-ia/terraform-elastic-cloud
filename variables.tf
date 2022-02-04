@@ -1,6 +1,7 @@
 variable "apikey" {
   type = string
-  description = "Elastic API Key"
+  description = "Elasticsearch Service API Key"
+  sensitive = true
 }
 
 variable "deployment_template_id" {
@@ -43,16 +44,19 @@ variable "sourceip" {
 variable "existing_snapshot_s3_bucket_name" {
   type = string
   description = "Existing S3 bucket name for snapshots"
+  default = ""
 }
 
 variable "s3_client_access_key" {
   type = string
   description = "Access Key ID for the S3 for snapshots"
+  sensitive = true
 }
 
 variable "s3_client_secret_key" {
   type = string
   description = "Secret Access Key for the S3 for snapshots"
+  sensitive = true
 }
 
 variable "local_elasticsearch_url" {
@@ -81,6 +85,18 @@ variable "agent_s3_bucket_prefix" {
   description = "Creates a unique bucket name beginning with the specified prefix"
   type        = string
   default     = "es-s3-agent"
+}
+
+variable "vault_address" {
+  description = "URL of the Vault server"
+}
+
+variable "vault_aws_path" {
+  description = "Path to where AWS Secret Access keys exist within Vault"
+}
+
+variable "vault_ess_path" {
+  description = "Path to where Elasticsearch Service (ESS) API key exist within Vault"
 }
 
 # EC2

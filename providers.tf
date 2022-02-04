@@ -15,6 +15,10 @@ terraform {
       source = "hashicorp/random"
       version = ">= 2.3.0"
     }
+    vault = {
+      source = "hashicorp/vault"
+      version = "3.2.1"
+    }
     elasticsearch = {
       source = "phillbaker/elasticsearch"
       version = "2.0.0-beta.2"
@@ -23,8 +27,7 @@ terraform {
 }
 
 provider "ec" {
-  # Configuration options
-  apikey = var.apikey
+  apikey = local.ess_api_key
 }
 
 provider "aws" {
@@ -34,4 +37,8 @@ provider "aws" {
 
 provider "elasticsearch" {
   url = var.local_elasticsearch_url
+}
+
+provider "vault" {
+  address = var.vault_address
 }
