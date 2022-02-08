@@ -270,3 +270,15 @@ data "aws_ami" "ubuntu" {
 
   owners = ["099720109477"] # Canonical
 }
+
+# Elastic serverless forwarder (ESF) from AWS Serverless Application Repository (SAR) for log ingestion
+data "aws_serverlessapplicationrepository_application" "esf_app" {
+  application_id = "arn:aws:serverlessrepo:eu-central-1:267093732750:applications/elastic-serverless-forwarder"
+}
+
+resource "aws_serverlessapplicationrepository_cloudformation_stack" "esf_cfn_stack" {
+  name             = "elastic-serverless-forwarder"
+  application_id   = data.aws_serverlessapplicationrepository_application.esf_app.application_id
+  semantic_version = data.aws_serverlessapplicationrepository_application.esf_app.semantic_version
+  capabilities     = data.aws_serverlessapplicationrepository_application.esf_app.required_capabilities
+}
