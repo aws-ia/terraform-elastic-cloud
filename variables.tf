@@ -78,7 +78,7 @@ variable "log_s3_bucket_prefix" {
 variable "snapshot_s3_bucket_prefix" {
   description = "Creates a unique bucket name beginning with the specified prefix"
   type        = string
-  default     = "es-s3-snapshot"
+  default     = "es-s3-repo"
 }
 
 variable "agent_s3_bucket_prefix" {
@@ -89,14 +89,20 @@ variable "agent_s3_bucket_prefix" {
 
 variable "vault_address" {
   description = "URL of the Vault server"
+  type        = string
+  default     = null
 }
 
 variable "vault_aws_path" {
   description = "Path to where AWS Secret Access keys exist within Vault"
+  type        = string
+  default     = null
 }
 
 variable "vault_ess_path" {
   description = "Path to where Elasticsearch Service (ESS) API key exist within Vault"
+  type        = string
+  default     = null
 }
 
 # EC2

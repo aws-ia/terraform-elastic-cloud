@@ -197,7 +197,8 @@ resource "aws_iam_role" "es_role" {
         "Service": [
           "s3.amazonaws.com",
           "ec2.amazonaws.com",
-          "sqs.amazonaws.com"
+          "sqs.amazonaws.com",
+          "lambda.amazonaws.com"
         ]
       },
       "Action": "sts:AssumeRole"
@@ -281,4 +282,9 @@ resource "aws_serverlessapplicationrepository_cloudformation_stack" "esf_cfn_sta
   application_id   = data.aws_serverlessapplicationrepository_application.esf_app.application_id
   semantic_version = data.aws_serverlessapplicationrepository_application.esf_app.semantic_version
   capabilities     = data.aws_serverlessapplicationrepository_application.esf_app.required_capabilities
+  /*
+  parameters = {
+    S3_CONFIG_FILE = "s3://${aws_s3_bucket.es_s3_log.id}/sar_config.yaml"
+  }
+  */
 }

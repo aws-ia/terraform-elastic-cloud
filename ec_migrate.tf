@@ -26,7 +26,7 @@ resource "ec_deployment_elasticsearch_keystore" "secret_key" {
 # Create a local repository and point to an S3 bucket (if local es url is provided)
 resource "elasticsearch_snapshot_repository" "create_local_repo" {
   count = var.local_elasticsearch_url != "" ? 1 : 0
-  depends_on = [aws_iam_role.es_role]
+
   name = var.local_elasticsearch_repo_name
   type = "s3"
   settings = {
@@ -34,12 +34,14 @@ resource "elasticsearch_snapshot_repository" "create_local_repo" {
     region   = var.region
     role_arn = aws_iam_role.es_role.arn
   }
+
+  depends_on = [aws_iam_role.es_role]
 }
 
 # Create a local one-off snapshot on the S3 repository (if local es url is provided)
 resource "null_resource" "create_snapshot" {
   count = var.local_elasticsearch_url != "" ? 1 : 0
-  depends_on = [elasticsearch_snapshot_repository.create_local_repo]
+
   provisioner "local-exec" {
     command=<<EOT
 curl -v XPUT "${var.local_elasticsearch_url}/_snapshot/${var.local_elasticsearch_repo_name}/${local.es_snapshot_name}?wait_for_completion=true" -H 'Content-Type: application/json' -d '
@@ -51,11 +53,14 @@ curl -v XPUT "${var.local_elasticsearch_url}/_snapshot/${var.local_elasticsearch
 '
 EOT
   }
+
+  depends_on = [elasticsearch_snapshot_repository.create_local_repo]
 }
 
 # Create a repository on Elastic Cloud and points to the S3 bucket
 resource "null_resource" "create_cloud_repo" {
-  depends_on = [ec_deployment.ec_minimal, null_resource.create_snapshot]
+  count = var.local_elasticsearch_url != "" ? 1 : 0
+
   provisioner "local-exec" {
     command=<<EOT
 curl -v XPUT -u ${ec_deployment.ec_minimal.elasticsearch_username}:${ec_deployment.ec_minimal.elasticsearch_password}  "${ec_deployment.ec_minimal.elasticsearch[0].https_endpoint}/_snapshot/${var.local_elasticsearch_repo_name}" -H 'Content-Type: application/json' -d '
@@ -69,10 +74,14 @@ curl -v XPUT -u ${ec_deployment.ec_minimal.elasticsearch_username}:${ec_deployme
 '
 EOT
   }
+
+  depends_on = [ec_deployment.ec_minimal, null_resource.create_snapshot]
 }
 
 # Check the Elastic Cloud repository status until it becomes available
 resource "null_resource" "restore_snapshot" {
+  count = var.local_elasticsearch_url != "" ? 1 : 0
+
   triggers = {
     status = length(regexall(".*nodes.*", file("./ec_repo.status"))) > 0
   }
