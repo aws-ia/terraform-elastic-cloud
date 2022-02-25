@@ -35,27 +35,30 @@ The deployment sets up the following components.
 
 ### Deployment steps 
 1.	Generate an Elasticsearch Service (ESS) API key:
-a.	Open your browser and navigate to https://cloud.elastic.co/login.
-b.	Log in with your email address and password.
-c.	Choose Elasticsearch Service.
-d.	Navigate to **Features > API Keys** and choose **Generate API Key**.
-e.	Choose a name for your API key.
-f.	Save your API key in a safe location.
+	a.	Open your browser and navigate to https://cloud.elastic.co/login.
+	b.	Log in with your email address and password.
+	c.	Choose **Elasticsearch Service**.
+	d.	Navigate to **Features > API Keys** and choose **Generate API Key**.
+	e.	Choose a name for your API key.
+	f.	Save your API key in a safe location.
 2.	Clone the Terraform Elastic Cloud Git repository using the following commands:
-a.	git clone https://github.com/aws-ia/terraform-elastic-cloud  
-b.	cd terraform-elastic-cloud 
+
+```
+git clone https://github.com/aws-ia/terraform-elastic-cloud  
+cd terraform-elastic-cloud
+```
 
 3.	Create <your file name>.tfvars file in the same directory with the following variable definitions:
-  ---
+  ```
 name = "Elasticsearch Cluster"
 apikey = "<your Elastic API key>"
-  ---
+  ```
 	
 4.	Run the Terraform module <your file name>.tfvars file, as shown here:
- ---
+ ```
 terraform init
 terraform apply -var-file="<your file name>.tfvars"
- ---
+ ```
 
 
 
