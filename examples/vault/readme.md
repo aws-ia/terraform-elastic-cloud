@@ -22,7 +22,9 @@
   vault kv put secret/<your path> s3_client_access_key="<your AWS access key>" s3_client_secret_key="<your AWS secret key>"
   ```
 
-2.	Run the following commands to provide the keys to the Terraform <your file name>.tfvars file:
+2.	Provide the key values to the variables in the <your file name>.tfvars file:
+  
+  **Note**: You can provide key values to the <your file name>.tfvars in other ways. For more information, refer to the [Assigning Values to Root Module Variables](https://www.terraform.io/language/values/variables) section in the Terraform documentation.
   
   ```
   name = "Elasticsearch Cluster"
@@ -37,6 +39,8 @@
 
 ### Migration steps
 1. Add the URL to the same .tfvars file you created in the previous steps. 
+  
+  **Note**: You can provide key values to the <your file name>.tfvars in other ways. For more information, refer to the [Assigning Values to Root Module Variables](https://www.terraform.io/language/values/variables) section in the Terraform documentation.
 
 ```
 name = "Elasticsearch Cluster"
