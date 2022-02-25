@@ -10,6 +10,7 @@
   export VAULT_TOKEN="<your Vault token>"
   ```
   
+
     2. Run this command to add your Elasticsearch API key: 
   
   ```
