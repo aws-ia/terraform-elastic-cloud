@@ -11,9 +11,9 @@
       ```
     2. Run this command to add your Elasticsearch API key: 
 
-       ```
-       vault kv put secret/<your path> apikey="<your Elastic API key>"
-       ```
+    ```
+    vault kv put secret/<your path> apikey="<your Elastic API key>"
+    ```
   
     3. Run the following commands to add your AWS API key:
     
