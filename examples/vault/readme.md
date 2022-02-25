@@ -7,7 +7,7 @@
   
   ```
   export VAULT_ADDR= "<your Vault URL>"
-  export VAULT_TOKEN="<your Vault Token>"
+  export VAULT_TOKEN="<your Vault token>"
   ```
 
   2. Run this command to add your Elasticsearch API key: 
@@ -52,4 +52,3 @@ apikey = "hashicorp/vault"
 s3_client_access_key = "hashicorp/vault"
 s3_client_secret_key  = "hashicorp/vault"
 ```
-
