@@ -144,7 +144,7 @@ terraform destroy -var-file="<your file name>.tfvars"
 ```
 
 ## Elastic Cloud automation structure
-The following Terraform modules are created as part of the Elastic Cloud deployment. 
+The following Terraform modules are used for Elastic Cloud deployment. 
 - examples/vault – example modules if you are using HashiCorp Vault
 - ec_aws_resource.tf – Creates all the AWS resources needed for the deployment.
 - ec_migrate.tf – Migrates self-managed Elasticsearch data to Elastic Cloud.  
