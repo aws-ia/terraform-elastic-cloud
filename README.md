@@ -143,13 +143,13 @@ terraform destroy -var-file="<your file name>.tfvars"
 
 ## Elastic Cloud automation structure
 The following Terraform modules are created as part of the Elastic Cloud deployment. 
-- examples/vault ¬– example modules if you are using HashiCorp Vault
-- ec_aws_resource.tf ¬– Creates all the AWS resources needed for the deployment.
-- ec_migrate.tf ¬– Migrates self-managed Elasticsearch data to Elastic Cloud.  
-- ec_secrets.tf ¬– Contains code to retrieve the secrets keys. 
-- ec_main.tf ¬– Contains the primary entry point for Elastic Cloud deployment.
-- ec_outputs.tf ¬– Used for the declarations of output values. 
-- ec_providers.tf ¬– Specifies providers.
-- ec_variables.tf ¬– Contains the declaration of input variables.
-- <your file name>.tfvars ¬– Provides required input values.
+- examples/vault – example modules if you are using HashiCorp Vault
+- ec_aws_resource.tf – Creates all the AWS resources needed for the deployment.
+- ec_migrate.tf – Migrates self-managed Elasticsearch data to Elastic Cloud.  
+- ec_secrets.tf – Contains code to retrieve the secrets keys. 
+- ec_main.tf – Contains the primary entry point for Elastic Cloud deployment.
+- ec_outputs.tf – Used for the declarations of [output values](https://www.terraform.io/language/values/outputs). 
+- ec_providers.tf – Specifies [providers](https://www.terraform.io/language/providers).
+- ec_variables.tf – Contains the declaration of [input variables](https://www.terraform.io/language/values/variables).
+- <your file name>.tfvars – Provides required input values.
 
