@@ -36,12 +36,12 @@ The deployment sets up the following components.
 ### Deployment steps 
 1.	Generate an Elasticsearch Service (ESS) API key:
 
-	a.	Open your browser and navigate to https://cloud.elastic.co/login.
-	b.	Log in with your email address and password.
-	c.	Choose **Elasticsearch Service**.
-	d.	Navigate to **Features > API Keys** and choose **Generate API Key**.
-	e.	Choose a name for your API key.
-	f.	Save your API key in a safe location.
+	1.	Open your browser and navigate to https://cloud.elastic.co/login.
+	2.	Log in with your email address and password.
+	3.	Choose **Elasticsearch Service**.
+	4.	Navigate to **Features > API Keys** and choose **Generate API Key**.
+	5.	Choose a name for your API key.
+	6.	Save your API key in a safe location.
 
 2.	Clone the Terraform Elastic Cloud Git repository using the following commands:
 
