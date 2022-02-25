@@ -1,5 +1,51 @@
 ## Terraform for Elastic Cloud on AWS
-Terraform module for automating deployment of Elastic Cloud with added migration capabilities.
+This Terraform module automates your Elastic Cloud deployment and optional data migration to the AWS Cloud. The deployment provisions the following components:
+
+●	Your Elastic Cloud cluster.
+●	Amazon Elastic Compute Cloud (Amazon EC2), which is needed for [Elastic Agent](https://www.elastic.co/elastic-agent).
+●	An Amazon Simple Storage Service (Amazon S3) bucket needed for [Elasticsearch snapshots](https://www.elastic.co/guide/en/elasticsearch/reference/current/snapshot-restore.html).
+●	[Elastic Serverless Forwarder](https://serverlessrepo.aws.amazon.com/applications/eu-central-1/267093732750/elastic-serverless-forwarder) for data ingestion.
+●	An AWS Identity and Access Management (IAM) instance role with fine-grained permissions to access AWS services.
+
+Existing customers with Elasticsearch cluster data stored on premises in a self-managed Elasticsearch cluster can optionally choose to migrate that data into Elastic Cloud after deployment to AWS. 
+
+Both the deployment and migration processes are covered in this document. 
+
+## Prerequisites
+Check that you are running the most current version of Terraform software. For more information, refer to [Install Terraform](https://learn.hashicorp.com/tutorials/terraform/install-cli).
+
+## Deployment architecture
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ## Supported Features
 - Provisioning [Elastic Cloud](https://www.elastic.co/cloud/) cluster on AWS
