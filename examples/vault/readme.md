@@ -38,7 +38,8 @@
   ```
 
 ### Migration steps
-1. Add the URL to the same .tfvars file you created in the previous steps. 
+
+Add the URL to the same .tfvars file you created in the previous steps. 
   
   **Note**: You can provide key values to the <your file name>.tfvars in other ways. For more information, refer to the [Assigning Values to Root Module Variables](https://www.terraform.io/language/values/variables) section in the Terraform documentation.
 
