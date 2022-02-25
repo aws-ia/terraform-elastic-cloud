@@ -3,20 +3,20 @@
 ### Deployment steps
 1.	Set the Vault environment variables. Be sure to replace the example values in brackets (<>) with your own values.
 
-  1. Run the following export commands. 
+    1. Run the following export commands. 
   
   ```
   export VAULT_ADDR= "<your Vault URL>"
   export VAULT_TOKEN="<your Vault token>"
   ```
-
-  2. Run this command to add your Elasticsearch API key: 
+  
+    2. Run this command to add your Elasticsearch API key: 
   
   ```
   vault kv put secret/<your path> apikey="<your Elastic API key>"
   ```
-
-  3. Run the following commands to add your AWS API key:
+  
+    3. Run the following commands to add your AWS API key:
   
   ```
   vault kv put secret/<your path> s3_client_access_key="<your AWS access key>" s3_client_secret_key="<your AWS secret key>"
