@@ -41,6 +41,7 @@ The deployment sets up the following components.
 	d.	Navigate to **Features > API Keys** and choose **Generate API Key**.
 	e.	Choose a name for your API key.
 	f.	Save your API key in a safe location.
+
 2.	Clone the Terraform Elastic Cloud Git repository using the following commands:
 
 ```
