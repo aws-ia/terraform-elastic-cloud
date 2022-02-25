@@ -1,4 +1,4 @@
-## HashiCorp Vault deployment and migration steps
+## Elastic Cloud deployment and migration with HashiCorp Vault
 
 ### Deployment steps
 1.	Set the Vault environment variables. Be sure to replace the example values in brackets (<>) with your own values.
