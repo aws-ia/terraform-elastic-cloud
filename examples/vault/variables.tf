@@ -150,3 +150,21 @@ variable "tags" {
   description = "tags, which could be used for additional tags"
   default     = {}
 }
+
+# Vault
+variable "vault_address" {
+  description = "URL of the Vault server"
+  default     = null
+}
+
+variable "vault_aws_path" {
+  description = "Path to where AWS Secret Access keys exist within Vault"
+  type        = string
+  default     = null
+}
+
+variable "vault_ess_path" {
+  description = "Path to where Elasticsearch Service (ESS) API key exist within Vault"
+  type        = string
+  default     = null
+}

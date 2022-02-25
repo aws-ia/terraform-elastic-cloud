@@ -38,3 +38,8 @@ provider "aws" {
 provider "elasticsearch" {
   url = var.local_elasticsearch_url
 }
+
+# Vault
+provider "vault" {
+  address = var.vault_address
+}
