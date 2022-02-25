@@ -1,23 +1,39 @@
 ## Terraform for Elastic Cloud on AWS
 This Terraform module automates your Elastic Cloud deployment and optional data migration to the AWS Cloud. The deployment provisions the following components:
 
-●	Your Elastic Cloud cluster.
-●	Amazon Elastic Compute Cloud (Amazon EC2), which is needed for [Elastic Agent](https://www.elastic.co/elastic-agent).
-●	An Amazon Simple Storage Service (Amazon S3) bucket needed for [Elasticsearch snapshots](https://www.elastic.co/guide/en/elasticsearch/reference/current/snapshot-restore.html).
-●	[Elastic Serverless Forwarder](https://serverlessrepo.aws.amazon.com/applications/eu-central-1/267093732750/elastic-serverless-forwarder) for data ingestion.
-●	An AWS Identity and Access Management (IAM) instance role with fine-grained permissions to access AWS services.
+- Your Elastic Cloud cluster.
+- Amazon Elastic Compute Cloud (Amazon EC2), which is needed for [Elastic Agent](https://www.elastic.co/elastic-agent).
+- An Amazon Simple Storage Service (Amazon S3) bucket needed for [Elasticsearch snapshots](https://www.elastic.co/guide/en/elasticsearch/reference/current/snapshot-restore.html).
+- [Elastic Serverless Forwarder](https://serverlessrepo.aws.amazon.com/applications/eu-central-1/267093732750/elastic-serverless-forwarder) for data ingestion.
+- An AWS Identity and Access Management (IAM) instance role with fine-grained permissions to access AWS services.
 
 Existing customers with Elasticsearch cluster data stored on premises in a self-managed Elasticsearch cluster can optionally choose to migrate that data into Elastic Cloud after deployment to AWS. 
 
 Both the deployment and migration processes are covered in this document. 
 
-## Prerequisites
+## Deployment (without data migration)
+
+### Prerequisites
 Check that you are running the most current version of Terraform software. For more information, refer to [Install Terraform](https://learn.hashicorp.com/tutorials/terraform/install-cli).
 
-## Deployment architecture
+### Architecture
+![](docs/images/elastic-architecture-diagram.png)
 
+The deployment sets up the following components.
+- A highly available architecture that spans multiple Availability Zones.
+- A virtual private cloud (VPC) configured with public and private subnets according to AWS best practices, to provide you with your own virtual network on AWS.
+- An AWS EC2 instance for the Elastic Agent.
+- AWS Serverless Application Repository functions integration to create an Elastic forwarder and multiple sources to ingest into Elastic Cloud. 
+- Elastic Agent and Elastic serverless forwarder to receive logs from the S3 bucket.
+- AWS Secrets Manager to store Elasticsearch credentials
+- Amazon SQS to ingest logs contained in the S3 bucket through event notifications.
+- AWS WAF to protect web applications from common web exploits.
+- AWS CloudTrail to track user activity and API usage.
+- Amazon VPC flow logs to capture information about IP traffic going to and from network interfaces.
+- Amazon S3 buckets to host Elastic snapshots and capture logs from the various AWS services such as AWS WAF, Amazon VPC flow logs, AWS CloudTrail, and network firewall logs.
+- An AWS IAM role with fine-grained permissions for access to AWS services required for deployment.
 
-
+### Deployment steps 
 
 
 
