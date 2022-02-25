@@ -114,7 +114,7 @@ To perform the deployment with migration:
 ```
 git clone https://github.com/aws-ia/terraform-elastic-cloud  
 cd terraform-elastic-cloud 
-	```
+```
 
 3.	Create <your file name>.tfvars file in the same directory with the following variable definitions:
 	
