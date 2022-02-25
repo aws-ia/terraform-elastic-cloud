@@ -61,6 +61,14 @@ apikey = "<your Elastic API key>"
 terraform init
 terraform apply -var-file="<your file name>.tfvars"
  ```
+## Deployment with Elasticsearch data migration
+
+When planning your Elasticsearch data migration to Elastic Cloud, you have a few options. In some cases, you may not need to migrate the data in existing clusters. This is common when you are planning to migrate the data source itself and can just re-ingest the data into Elastic Cloud after migration. Another reason for not migrating your data is when the existing indices are time-sensitive and no longer needed. In these cases, you can just deploy Elastic Cloud without migrating any data from existing clusters.
+
+For cases where the data must be migrated to Elastic Cloud, options depend on the use case, data volume, current Elasticsearch version, and uptime requirements on the current Elasticsearch application. Options include: 
+- **Snapshot and restore** – In this option, you create an S3 bucket, add a snapshot of the current deployment into the bucket, add the same repository from Elastic Cloud, and finally restore indexes from the snapshot into Elastic Cloud. This option is covered in the steps that follow. 
+- **Re-index from a remote cluster** – In this option, you use the re-index API from the new cluster to retrieve data from the indices in the existing Elasticsearch cluster and then re-index them in the new Elastic Cloud deployment. This option is not covered in this document. 
+	
 
 
 
