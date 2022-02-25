@@ -35,6 +35,7 @@ The deployment sets up the following components.
 
 ### Deployment steps 
 1.	Generate an Elasticsearch Service (ESS) API key:
+
 	a.	Open your browser and navigate to https://cloud.elastic.co/login.
 	b.	Log in with your email address and password.
 	c.	Choose **Elasticsearch Service**.
