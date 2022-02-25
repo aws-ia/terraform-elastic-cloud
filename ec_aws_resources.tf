@@ -31,61 +31,11 @@ resource "aws_sqs_queue" "es_queue" {
   }
 }
 
-# S3 Bucket for logging
-resource "aws_s3_bucket" "es_s3_log" {
-  bucket_prefix = var.log_s3_bucket_prefix
-  acl    = "log-delivery-write"
+
+# S3 Bucket for Elasticsearch repository
+resource "aws_s3_bucket" "es_s3_repo" {
+  bucket_prefix = var.repo_s3_bucket_prefix
   force_destroy = true
-
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        sse_algorithm     = "AES256"
-      }
-    }
-  }
-
-  versioning {
-    enabled = true
-  }
-
-  tags = {
-    Name        = "Bucket for logging"
-    Environment = "Development"
-  }
-}
-
-# S3 public access block for Elasticsearch snapshot
-resource "aws_s3_bucket_public_access_block" "es_s3_log" {
-  bucket = aws_s3_bucket.es_s3_log.id
-  block_public_acls = true
-  block_public_policy = true
-  restrict_public_buckets = true
-  ignore_public_acls = true
-}
-
-# S3 Bucket for Elasticsearch snapshot
-resource "aws_s3_bucket" "es_s3_snapshot" {
-  bucket_prefix = var.snapshot_s3_bucket_prefix
-  acl    = "private"
-  force_destroy = true
-
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        sse_algorithm     = "AES256"
-      }
-    }
-  }
-
-  versioning {
-    enabled = true
-  }
-
-  logging {
-    target_bucket = aws_s3_bucket.es_s3_log.id
-    target_prefix = "s3_snapshot_log/"
-  }
 
   tags = {
     Name        = "Bucket for Elasticsearch snapshots"
@@ -94,21 +44,21 @@ resource "aws_s3_bucket" "es_s3_snapshot" {
 }
 
 # S3 Policy for bucket for Elasticsearch snapshot
-resource "aws_s3_bucket_policy" "es_s3_snapshot" {
-  bucket = aws_s3_bucket.es_s3_snapshot.id
+resource "aws_s3_bucket_policy" "es_s3_repo" {
+  bucket = aws_s3_bucket.es_s3_repo.id
 
   # Terraform expression's result to valid JSON syntax.
   policy = jsonencode({
     Version = "2012-10-17"
-    Id      = "es_s3_snapshot_policy"
+    Id      = "es_s3_repo_policy"
     Statement = [
       {
         Effect    = "Allow"
         Action    = "s3:*"
         Principal = {"AWS":"${local.aws_account_id}"}
         Resource = [
-          aws_s3_bucket.es_s3_snapshot.arn,
-          "${aws_s3_bucket.es_s3_snapshot.arn}/*",
+          aws_s3_bucket.es_s3_repo.arn,
+          "${aws_s3_bucket.es_s3_repo.arn}/*",
         ]
       },
     ]
@@ -116,8 +66,8 @@ resource "aws_s3_bucket_policy" "es_s3_snapshot" {
 }
 
 # S3 public access block for Elasticsearch snapshot
-resource "aws_s3_bucket_public_access_block" "es_s3_snapshot" {
-  bucket = aws_s3_bucket.es_s3_snapshot.id
+resource "aws_s3_bucket_public_access_block" "es_s3_repo" {
+  bucket = aws_s3_bucket.es_s3_repo.id
   block_public_acls = true
   block_public_policy = true
   restrict_public_buckets = true
@@ -127,25 +77,7 @@ resource "aws_s3_bucket_public_access_block" "es_s3_snapshot" {
 # S3 Bucket for Elastic Agent
 resource "aws_s3_bucket" "es_s3_agent" {
   bucket_prefix = var.agent_s3_bucket_prefix
-  acl    = "private"
   force_destroy = true
-
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        sse_algorithm     = "AES256"
-      }
-    }
-  }
-
-  versioning {
-    enabled = true
-  }
-
-  logging {
-    target_bucket = aws_s3_bucket.es_s3_log.id
-    target_prefix = "s3_agent_log/"
-  }
 
   tags = {
     Name        = "Bucket for Elastic Agent"
@@ -282,9 +214,4 @@ resource "aws_serverlessapplicationrepository_cloudformation_stack" "esf_cfn_sta
   application_id   = data.aws_serverlessapplicationrepository_application.esf_app.application_id
   semantic_version = data.aws_serverlessapplicationrepository_application.esf_app.semantic_version
   capabilities     = data.aws_serverlessapplicationrepository_application.esf_app.required_capabilities
-  /*
-  parameters = {
-    S3_CONFIG_FILE = "s3://${aws_s3_bucket.es_s3_log.id}/sar_config.yaml"
-  }
-  */
 }

@@ -11,7 +11,7 @@ resource "ec_deployment" "ec_minimal" {
 
   # Mandatory fields
   region                 = var.region
-  version                = data.ec_stack.latest.version
+  version                = var.deployment_version
   deployment_template_id = var.deployment_template_id
   traffic_filter         = [ec_deployment_traffic_filter.allow_all.id]
 

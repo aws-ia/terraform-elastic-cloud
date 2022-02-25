@@ -9,7 +9,7 @@ resource "random_id" "id" {
 
 # Add an access key to Elastic Cloud keystore to access a snapshot S3 bucket (if s3 access key is provided)
 resource "ec_deployment_elasticsearch_keystore" "access_key" {
-  count = local.aws_access_key != "" ? 1 : 0
+  count = local.aws_access_key != null ? 1 : 0
   deployment_id = ec_deployment.ec_minimal.id
   setting_name  = "s3.client.default.access_key"
   value         =  local.aws_access_key
@@ -17,7 +17,7 @@ resource "ec_deployment_elasticsearch_keystore" "access_key" {
 
 # Add a secret key to Elastic Cloud keystore to access a snapshot S3 bucket (if s3 access key is provided)
 resource "ec_deployment_elasticsearch_keystore" "secret_key" {
-  count = local.aws_secret_key != "" ? 1 : 0
+  count = local.aws_secret_key != null ? 1 : 0
   deployment_id = ec_deployment.ec_minimal.id
   setting_name  = "s3.client.default.secret_key"
   value         = local.aws_secret_key
@@ -30,7 +30,7 @@ resource "elasticsearch_snapshot_repository" "create_local_repo" {
   name = var.local_elasticsearch_repo_name
   type = "s3"
   settings = {
-    bucket   = var.existing_snapshot_s3_bucket_name != "" ? var.existing_snapshot_s3_bucket_name : aws_s3_bucket.es_s3_snapshot.id
+    bucket   = var.existing_s3_repo_bucket_name != "" ? var.existing_s3_repo_bucket_name : aws_s3_bucket.es_s3_repo.id
     region   = var.region
     role_arn = aws_iam_role.es_role.arn
   }
@@ -67,7 +67,7 @@ curl -v XPUT -u ${ec_deployment.ec_minimal.elasticsearch_username}:${ec_deployme
 {
   "type": "s3",
   "settings": {
-    "bucket": "${aws_s3_bucket.es_s3_snapshot.id}",
+    "bucket": "${var.existing_s3_repo_bucket_name != "" ? var.existing_s3_repo_bucket_name : aws_s3_bucket.es_s3_repo.id}",
     "region": "${var.region}"
   }
 }
