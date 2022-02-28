@@ -7,11 +7,9 @@ This Terraform module automates your Elastic Cloud deployment and optional data 
 * [Elastic Serverless Forwarder](https://www.elastic.co/blog/elastic-and-aws-serverless-application-repository-speed-time-to-actionable-insights-with-frictionless-log-ingestion-from-amazon-s3) for data ingestion.
 * An AWS Identity and Access Management (IAM) instance role with fine-grained permissions to access AWS services.
 
-Existing customers with Elasticsearch cluster data stored on premises in a self-managed Elasticsearch cluster can optionally choose to migrate that data into Elastic Cloud after deployment to AWS. 
+Existing customers with Elasticsearch cluster data stored on premises in a self-managed Elasticsearch cluster can optionally choose to migrate that data into Elastic Cloud after deployment to AWS. Both the deployment and migration processes are covered in this document. 
 
-Both the deployment and migration processes are covered in this document. 
-
-**Note**: If using HashiCorp Vault, see the examples and accompanying readme in the examples/vault folder in this GitHub repository.
+**Note**: If using HashiCorp Vault, see the examples and accompanying readme in the [examples/vault](https://github.com/aws-ia/terraform-elastic-cloud/tree/develop/examples/vault) folder in this GitHub repository.
 
 ***Authors and Contributors***
 
