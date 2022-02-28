@@ -72,6 +72,8 @@ When planning your Elasticsearch data migration to Elastic Cloud, you have a few
 For cases where the data must be migrated to Elastic Cloud, options depend on the use case, data volume, current Elasticsearch version, and uptime requirements on the current Elasticsearch application. Options include: 
 - **Snapshot and restore** – In this option, you create an S3 bucket, add a snapshot of the current deployment into the bucket, add the same repository from Elastic Cloud, and finally restore indexes from the snapshot into Elastic Cloud. This option is covered in the steps that follow. 
 - **Re-index from a remote cluster** – In this option, you use the re-index API from the new cluster to retrieve data from the indices in the existing Elasticsearch cluster and then re-index them in the new Elastic Cloud deployment. This option is not covered in this document. 
+
+> **Note**: To learn more, visit [AWS Prescriptive Guidance: Migrate an ELK Stack to Elastic Cloud on AWS](https://docs.aws.amazon.com/prescriptive-guidance/latest/patterns/migrate-an-elk-stack-to-elastic-cloud-on-aws.html).
 	
 ### Prerequisites
 
