@@ -9,11 +9,11 @@ This Terraform module automates your Elastic Cloud deployment and optional data 
 
 Existing customers with Elasticsearch cluster data stored on premises in a self-managed Elasticsearch cluster can optionally choose to migrate that data into Elastic Cloud after deployment to AWS. Both the deployment and migration processes are covered in this document. 
 
-_**Note**: If using HashiCorp Vault, see the examples and accompanying readme in the [examples/vault](https://github.com/aws-ia/terraform-elastic-cloud/tree/develop/examples/vault) folder in this GitHub repository._
+> **Note**: If using HashiCorp Vault, see the examples and accompanying readme in the [examples/vault](https://github.com/aws-ia/terraform-elastic-cloud/tree/develop/examples/vault) folder in this GitHub repository.
 
 ### Authors and Contributors
 
-Battulga Purevragchaa (batpur@amazon.com), Uday Theepireddy (uday@elastic.co) and [other contributors](https://github.com/aws-ia/terraform-elastic-cloud/graphs/contributors).  
+Battulga Purevragchaa (AWS), Uday Theepireddy (Elastic) and [other contributors](https://github.com/aws-ia/terraform-elastic-cloud/graphs/contributors).  
 
 ## Deployment (without data migration)
 
@@ -138,7 +138,7 @@ local_elasticsearch_url = "your local Elastic cluster URL"
 terraform init
 terraform apply -var-file="<your file name>.tfvars"
 ```
-## Cleanup
+## Clean up the infrastructure
 If you no longer need the infrastructure that’s provisioned by the Terraform module, run the following command to remove the deployment infrastructure and terminate all resources. 
 	
 ```
