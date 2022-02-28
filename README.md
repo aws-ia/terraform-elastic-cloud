@@ -1,22 +1,24 @@
 ## Terraform for Elastic Cloud on AWS
 This Terraform module automates your Elastic Cloud deployment and optional data migration to the AWS Cloud. The deployment provisions the following components:
 
-- Your Elastic Cloud cluster.
-- Amazon Elastic Compute Cloud (Amazon EC2), which is needed for [Elastic Agent](https://www.elastic.co/elastic-agent).
-- An Amazon Simple Storage Service (Amazon S3) bucket needed for [Elasticsearch snapshots](https://www.elastic.co/guide/en/elasticsearch/reference/current/snapshot-restore.html).
-- [Elastic Serverless Forwarder](https://serverlessrepo.aws.amazon.com/applications/eu-central-1/267093732750/elastic-serverless-forwarder) for data ingestion.
-- An AWS Identity and Access Management (IAM) instance role with fine-grained permissions to access AWS services.
+* Your Elastic Cloud cluster.
+* Amazon Elastic Compute Cloud (Amazon EC2), which is needed for [Elastic Agent](https://www.elastic.co/elastic-agent).
+* An Amazon Simple Storage Service (Amazon S3) bucket needed for [Elasticsearch snapshots](https://www.elastic.co/guide/en/elasticsearch/reference/current/snapshot-restore.html).
+* [Elastic Serverless Forwarder](https://www.elastic.co/blog/elastic-and-aws-serverless-application-repository-speed-time-to-actionable-insights-with-frictionless-log-ingestion-from-amazon-s3) for data ingestion.
+* An AWS Identity and Access Management (IAM) instance role with fine-grained permissions to access AWS services.
 
-Existing customers with Elasticsearch cluster data stored on premises in a self-managed Elasticsearch cluster can optionally choose to migrate that data into Elastic Cloud after deployment to AWS. 
+Existing customers with Elasticsearch cluster data stored on premises in a self-managed Elasticsearch cluster can optionally choose to migrate that data into Elastic Cloud after deployment to AWS. Both the deployment and migration processes are covered in this document. 
 
-Both the deployment and migration processes are covered in this document. 
+> **Note**: If using [HashiCorp Vault](https://www.vaultproject.io/), see the examples and accompanying readme in the [examples/vault](https://github.com/aws-ia/terraform-elastic-cloud/tree/develop/examples/vault) folder in this GitHub repository.
 
-**Note**: If using HashiCorp Vault, see the examples and accompanying readme in the examples/vault folder in this GitHub repository.
+### Authors and Contributors
+
+Battulga Purevragchaa (AWS), Uday Theepireddy (Elastic) and [other contributors](https://github.com/aws-ia/terraform-elastic-cloud/graphs/contributors).  
 
 ## Deployment (without data migration)
 
 ### Prerequisites
-Check that you are running the most current version of Terraform software. For more information, refer to [Install Terraform](https://learn.hashicorp.com/tutorials/terraform/install-cli).
+Check that you are running the most current version of Terraform software. For more, see [Install Terraform](https://learn.hashicorp.com/tutorials/terraform/install-cli).
 
 ### Deployment architecture
 ![](docs/images/elastic-architecture-diagram.png)
@@ -70,6 +72,8 @@ When planning your Elasticsearch data migration to Elastic Cloud, you have a few
 For cases where the data must be migrated to Elastic Cloud, options depend on the use case, data volume, current Elasticsearch version, and uptime requirements on the current Elasticsearch application. Options include: 
 - **Snapshot and restore** – In this option, you create an S3 bucket, add a snapshot of the current deployment into the bucket, add the same repository from Elastic Cloud, and finally restore indexes from the snapshot into Elastic Cloud. This option is covered in the steps that follow. 
 - **Re-index from a remote cluster** – In this option, you use the re-index API from the new cluster to retrieve data from the indices in the existing Elasticsearch cluster and then re-index them in the new Elastic Cloud deployment. This option is not covered in this document. 
+
+> **Note**: To learn more, visit [AWS Prescriptive Guidance: Migrate an ELK Stack to Elastic Cloud on AWS](https://docs.aws.amazon.com/prescriptive-guidance/latest/patterns/migrate-an-elk-stack-to-elastic-cloud-on-aws.html).
 	
 ### Prerequisites
 
@@ -128,7 +132,7 @@ s3_client_secret_key  = "your AWS secret key"
 local_elasticsearch_url = "your local Elastic cluster URL"
 ```
 
-**Note**: Assign the URL of your self-managed Elasticsearch to `local_elasticsearch_url` (for example, http://127.0.0.1:9200).
+> Note: Assign the URL of your self-managed Elasticsearch to `local_elasticsearch_url` (for example, http://127.0.0.1:9200).
 
 4.	Run the Terraform module to deploy the Elastic Cloud cluster on AWS and migrate the self-managed Elasticsearch data.
 
@@ -136,7 +140,7 @@ local_elasticsearch_url = "your local Elastic cluster URL"
 terraform init
 terraform apply -var-file="<your file name>.tfvars"
 ```
-## Cleanup
+## Clean up the infrastructure
 If you no longer need the infrastructure that’s provisioned by the Terraform module, run the following command to remove the deployment infrastructure and terminate all resources. 
 	
 ```
@@ -144,14 +148,16 @@ terraform destroy -var-file="<your file name>.tfvars"
 ```
 
 ## Elastic Cloud automation structure
-The following Terraform modules are used for Elastic Cloud deployment. 
-- examples/vault – example modules if you are using HashiCorp Vault
-- ec_aws_resource.tf – Creates all the AWS resources needed for the deployment.
-- ec_migrate.tf – Migrates self-managed Elasticsearch data to Elastic Cloud.  
-- ec_secrets.tf – Contains code to retrieve the secrets keys. 
-- ec_main.tf – Contains the primary entry point for Elastic Cloud deployment.
-- ec_outputs.tf – Used for the declarations of [output values](https://www.terraform.io/language/values/outputs). 
-- ec_providers.tf – Specifies [providers](https://www.terraform.io/language/providers).
-- ec_variables.tf – Contains the declaration of [input variables](https://www.terraform.io/language/values/variables).
-- <your file name>.tfvars – Provides required input values.
+The following Terraform modules are used for Elastic Cloud deployment.
 
+| Name | Description |
+|------|------|
+| [examples/vault](https://github.com/aws-ia/terraform-elastic-cloud/tree/develop/examples/vault) | Example modules if you are using [HashiCorp Vault](https://www.vaultproject.io/) |
+| [ec_aws_resource.tf](https://github.com/aws-ia/terraform-elastic-cloud/blob/develop/ec_aws_resources.tf) | Creates all the AWS resources needed for the deployment | 
+| [ec_migrate.tf](https://github.com/aws-ia/terraform-elastic-cloud/blob/develop/ec_migrate.tf) | Migrates self-managed Elasticsearch data to Elastic Cloud |  
+| [ec_secrets.tf](https://github.com/aws-ia/terraform-elastic-cloud/blob/develop/ec_secrets.tf) | Contains code to retrieve the secrets keys |
+| [main.tf](https://github.com/aws-ia/terraform-elastic-cloud/blob/develop/main.tf) | Contains the primary entry point for Elastic Cloud deployment | <your file name>.tfvars | Provides required input values. |
+| [outputs.tf](https://github.com/aws-ia/terraform-elastic-cloud/blob/develop/outputs.tf) | Used for the declarations of [output values](https://www.terraform.io/language/values/outputs) | <your file name>.tfvars | Provides required input values. |
+| [providers.tf](https://github.com/aws-ia/terraform-elastic-cloud/blob/develop/providers.tf) | Specifies [providers](https://www.terraform.io/language/providers) | <your file name>.tfvars | Provides required input values. |
+| [variables.tf](https://github.com/aws-ia/terraform-elastic-cloud/blob/develop/variables.tf) | Contains the declaration of [input variables](https://www.terraform.io/language/values/variables) | <your file name>.tfvars | Provides required input values. |
+| \<your file name>.tfvars | Provides required input values |
