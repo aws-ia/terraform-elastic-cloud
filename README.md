@@ -9,7 +9,7 @@ This Terraform module automates your Elastic Cloud deployment and optional data 
 
 Existing customers with Elasticsearch cluster data stored on premises in a self-managed Elasticsearch cluster can optionally choose to migrate that data into Elastic Cloud after deployment to AWS. Both the deployment and migration processes are covered in this document. 
 
-_Note: If using HashiCorp Vault, see the examples and accompanying readme in the [examples/vault](https://github.com/aws-ia/terraform-elastic-cloud/tree/develop/examples/vault) folder in this GitHub repository._
+_**Note**: If using HashiCorp Vault, see the examples and accompanying readme in the [examples/vault](https://github.com/aws-ia/terraform-elastic-cloud/tree/develop/examples/vault) folder in this GitHub repository._
 
 ### Authors and Contributors
 
