@@ -132,7 +132,7 @@ s3_client_secret_key  = "your AWS secret key"
 local_elasticsearch_url = "your local Elastic cluster URL"
 ```
 
-**Note**: Assign the URL of your self-managed Elasticsearch to `local_elasticsearch_url` (for example, http://127.0.0.1:9200).
+> Note: Assign the URL of your self-managed Elasticsearch to `local_elasticsearch_url` (for example, http://127.0.0.1:9200).
 
 4.	Run the Terraform module to deploy the Elastic Cloud cluster on AWS and migrate the self-managed Elasticsearch data.
 
