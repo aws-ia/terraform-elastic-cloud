@@ -11,7 +11,7 @@ Existing customers with Elasticsearch cluster data stored on premises in a self-
 
 _Note: If using HashiCorp Vault, see the examples and accompanying readme in the [examples/vault](https://github.com/aws-ia/terraform-elastic-cloud/tree/develop/examples/vault) folder in this GitHub repository._
 
-## Authors and Contributors
+### Authors and Contributors
 
 Battulga Purevragchaa (batpur@amazon.com), Uday Theepireddy (uday@elastic.co) and [other contributors](https://github.com/aws-ia/terraform-elastic-cloud/graphs/contributors).  
 
