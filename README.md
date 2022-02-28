@@ -18,7 +18,7 @@ Battulga Purevragchaa (AWS), Uday Theepireddy (Elastic) and [other contributors]
 ## Deployment (without data migration)
 
 ### Prerequisites
-Check that you are running the most current version of Terraform software. For more information, refer to [Install Terraform](https://learn.hashicorp.com/tutorials/terraform/install-cli).
+Check that you are running the most current version of Terraform software. For more, see [Install Terraform](https://learn.hashicorp.com/tutorials/terraform/install-cli).
 
 ### Deployment architecture
 ![](docs/images/elastic-architecture-diagram.png)
