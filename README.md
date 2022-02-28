@@ -11,7 +11,7 @@ Existing customers with Elasticsearch cluster data stored on premises in a self-
 
 Both the deployment and migration processes are covered in this document. 
 
-_**Note**: If using HashiCorp Vault, see the examples and accompanying readme in the examples/vault folder in this GitHub repository._
+**Note**: If using HashiCorp Vault, see the examples and accompanying readme in the examples/vault folder in this GitHub repository.
 
 ***Authors and Contributors***
 
