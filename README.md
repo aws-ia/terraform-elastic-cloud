@@ -152,12 +152,12 @@ The following Terraform modules are used for Elastic Cloud deployment.
 
 | Name | Description |
 |------|------|
-| [examples/vault](https://github.com/aws-ia/terraform-elastic-cloud/tree/develop/examples/vault) | Example modules if you are using [HashiCorp Vault](https://www.vaultproject.io/) |
-| [ec_aws_resource.tf](https://github.com/aws-ia/terraform-elastic-cloud/blob/develop/ec_aws_resources.tf) | Creates all the AWS resources needed for the deployment | 
-| [ec_migrate.tf](https://github.com/aws-ia/terraform-elastic-cloud/blob/develop/ec_migrate.tf) | Migrates self-managed Elasticsearch data to Elastic Cloud |  
-| [ec_secrets.tf](https://github.com/aws-ia/terraform-elastic-cloud/blob/develop/ec_secrets.tf) | Contains code to retrieve the secrets keys |
-| [main.tf](https://github.com/aws-ia/terraform-elastic-cloud/blob/develop/main.tf) | Contains the primary entry point for Elastic Cloud deployment | <your file name>.tfvars | Provides required input values. |
-| [outputs.tf](https://github.com/aws-ia/terraform-elastic-cloud/blob/develop/outputs.tf) | Used for the declarations of [output values](https://www.terraform.io/language/values/outputs) | <your file name>.tfvars | Provides required input values. |
-| [providers.tf](https://github.com/aws-ia/terraform-elastic-cloud/blob/develop/providers.tf) | Specifies [providers](https://www.terraform.io/language/providers) | <your file name>.tfvars | Provides required input values. |
-| [variables.tf](https://github.com/aws-ia/terraform-elastic-cloud/blob/develop/variables.tf) | Contains the declaration of [input variables](https://www.terraform.io/language/values/variables) | <your file name>.tfvars | Provides required input values. |
+| [examples/vault](https://github.com/aws-ia/terraform-elastic-cloud/tree/main/examples/vault) | Example modules if you are using [HashiCorp Vault](https://www.vaultproject.io/) |
+| [ec_aws_resource.tf](https://github.com/aws-ia/terraform-elastic-cloud/blob/main/ec_aws_resources.tf) | Creates all the AWS resources needed for the deployment | 
+| [ec_migrate.tf](https://github.com/aws-ia/terraform-elastic-cloud/blob/main/ec_migrate.tf) | Migrates self-managed Elasticsearch data to Elastic Cloud |  
+| [ec_secrets.tf](https://github.com/aws-ia/terraform-elastic-cloud/blob/main/ec_secrets.tf) | Contains code to retrieve the secrets keys |
+| [main.tf](https://github.com/aws-ia/terraform-elastic-cloud/blob/main/main.tf) | Contains the primary entry point for Elastic Cloud deployment | <your file name>.tfvars | Provides required input values. |
+| [outputs.tf](https://github.com/aws-ia/terraform-elastic-cloud/blob/main/outputs.tf) | Used for the declarations of [output values](https://www.terraform.io/language/values/outputs) | <your file name>.tfvars | Provides required input values. |
+| [providers.tf](https://github.com/aws-ia/terraform-elastic-cloud/blob/main/providers.tf) | Specifies [providers](https://www.terraform.io/language/providers) | <your file name>.tfvars | Provides required input values. |
+| [variables.tf](https://github.com/aws-ia/terraform-elastic-cloud/blob/main/variables.tf) | Contains the declaration of [input variables](https://www.terraform.io/language/values/variables) | <your file name>.tfvars | Provides required input values. |
 | \<your file name>.tfvars | Provides required input values |

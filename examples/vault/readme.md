@@ -7,12 +7,12 @@
      
       ```
       export VAULT_ADDR= "<your Vault URL>"
-      export VAULT_TOKEN="<your Vault token>"
+      export VAULT_TOKEN="<your Vault Token>"
       ```
     2. Run this command to add your Elasticsearch API key: 
 
     ```
-    vault kv put secret/<your path> apikey="<your Elastic API key>"
+    vault kv put secret/<your path> apikey="your Elastic API key"
     ```
   
     3. Run the following commands to add your AWS API key:
@@ -23,12 +23,11 @@
 
 2.	Provide the key values to the variables in the <your file name>.tfvars file:
   
-  **Note**: You can provide key values to the <your file name>.tfvars in other ways. For more information, refer to the [Assigning Values to Root Module Variables](https://www.terraform.io/language/values/variables) section in the Terraform documentation.
+  > Note: You can provide key values to the <your file name>.tfvars in other ways. For more, see [Assigning Values to Root Module Variables](https://www.terraform.io/language/values/variables) section in the Terraform documentation.
   
   ```
   name = "Elasticsearch Cluster"
-  local_elasticsearch_url = ""
-  vault_address = "your local Elastic cluster URL>"
+  vault_address = "your Vault Server URL"
   vault_ess_path = "secret/<your path>"
   vault_aws_path = "secret/<your path>"
   apikey = "hashicorp/vault"
@@ -38,14 +37,14 @@
 
 ### Migration steps
 
-Add the URL to the same .tfvars file you created in the previous steps. 
-  
-  **Note**: You can provide key values to the <your file name>.tfvars in other ways. For more information, refer to the [Assigning Values to Root Module Variables](https://www.terraform.io/language/values/variables) section in the Terraform documentation.
+Add the URL to the same .tfvars file you created in the previous steps.
+
+> Note: Assign the URL of your self-managed Elasticsearch to `local_elasticsearch_url` (for example, http://127.0.0.1:9200).
 
 ```
 name = "Elasticsearch Cluster"
-local_elasticsearch_url = "your local Elasticsearch cluster URL>"
-vault_address = "http://127.0.0.1:8200"
+local_elasticsearch_url = "your local Elasticsearch URL"
+vault_address = "your Vault Server URL"
 vault_ess_path = "secret/<your path>"
 vault_aws_path = "secret/<your path>"
 apikey = "hashicorp/vault"
