@@ -7,12 +7,12 @@
      
       ```
       export VAULT_ADDR= "<your Vault URL>"
-      export VAULT_TOKEN="<your Vault token>"
+      export VAULT_TOKEN="<your Vault Token>"
       ```
     2. Run this command to add your Elasticsearch API key: 
 
     ```
-    vault kv put secret/<your path> apikey="<your Elastic API key>"
+    vault kv put secret/<your path> apikey="your Elastic API key"
     ```
   
     3. Run the following commands to add your AWS API key:
@@ -27,8 +27,7 @@
   
   ```
   name = "Elasticsearch Cluster"
-  local_elasticsearch_url = ""
-  vault_address = "Your Vault Server URL"
+  vault_address = "your Vault Server URL"
   vault_ess_path = "secret/<your path>"
   vault_aws_path = "secret/<your path>"
   apikey = "hashicorp/vault"
@@ -44,8 +43,8 @@ Add the URL to the same .tfvars file you created in the previous steps.
 
 ```
 name = "Elasticsearch Cluster"
-local_elasticsearch_url = "your local Elasticsearch cluster URL>"
-vault_address = "Your Vault Server URL"
+local_elasticsearch_url = "your local Elasticsearch URL"
+vault_address = "your Vault Server URL"
 vault_ess_path = "secret/<your path>"
 vault_aws_path = "secret/<your path>"
 apikey = "hashicorp/vault"
