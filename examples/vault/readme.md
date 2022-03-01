@@ -23,12 +23,12 @@
 
 2.	Provide the key values to the variables in the <your file name>.tfvars file:
   
-  **Note**: You can provide key values to the <your file name>.tfvars in other ways. For more information, refer to the [Assigning Values to Root Module Variables](https://www.terraform.io/language/values/variables) section in the Terraform documentation.
+  > Note: You can provide key values to the <your file name>.tfvars in other ways. For more, see [Assigning Values to Root Module Variables](https://www.terraform.io/language/values/variables) section in the Terraform documentation.
   
   ```
   name = "Elasticsearch Cluster"
   local_elasticsearch_url = ""
-  vault_address = "your local Elastic cluster URL>"
+  vault_address = "Your Vault Server URL"
   vault_ess_path = "secret/<your path>"
   vault_aws_path = "secret/<your path>"
   apikey = "hashicorp/vault"
@@ -38,14 +38,14 @@
 
 ### Migration steps
 
-Add the URL to the same .tfvars file you created in the previous steps. 
-  
-  **Note**: You can provide key values to the <your file name>.tfvars in other ways. For more information, refer to the [Assigning Values to Root Module Variables](https://www.terraform.io/language/values/variables) section in the Terraform documentation.
+Add the URL to the same .tfvars file you created in the previous steps.
+
+> Note: Assign the URL of your self-managed Elasticsearch to `local_elasticsearch_url` (for example, http://127.0.0.1:9200).
 
 ```
 name = "Elasticsearch Cluster"
 local_elasticsearch_url = "your local Elasticsearch cluster URL>"
-vault_address = "http://127.0.0.1:8200"
+vault_address = "Your Vault Server URL"
 vault_ess_path = "secret/<your path>"
 vault_aws_path = "secret/<your path>"
 apikey = "hashicorp/vault"
