@@ -1,4 +1,4 @@
-## Terraform for Elastic Cloud on AWS
+## Elastic Cloud on AWS
 This Terraform module automates your Elastic Cloud deployment and optional data migration to the AWS Cloud. The deployment provisions the following components:
 
 * Your Elastic Cloud cluster.
