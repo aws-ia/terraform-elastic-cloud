@@ -4,12 +4,6 @@ variable "apikey" {
   sensitive = true
 }
 
-variable "deployment_version" {
-  type = string
-  description = "Elastic Cloud Deployment Version"
-  default = "7.17.0"
-}
-
 variable "deployment_template_id" {
   type = string
   default = "aws-io-optimized-v2"

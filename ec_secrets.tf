@@ -15,6 +15,7 @@ resource "aws_secretsmanager_secret_version" "es_credentials" {
   secret_id = aws_secretsmanager_secret.es_secrets.id
   secret_string = <<EOF
   {
+    "es_url" : "${ec_deployment.ec_minimal.elasticsearch[0].https_endpoint}",
     "elasticsearch_username": "${ec_deployment.ec_minimal.elasticsearch_username}",
     "elasticsearch_password": "${ec_deployment.ec_minimal.elasticsearch_password}"
   }

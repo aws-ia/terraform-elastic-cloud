@@ -5,23 +5,23 @@ terraform {
   required_providers {
     ec = {
       source  = "elastic/ec"
-      version = ">= 0.3.0"
+      version = ">= 0.4.0"
     }
     aws = {
       source = "hashicorp/aws"
-      version = ">= 3.73.0"
+      version = ">= 4.12.1"
     }
     random = {
       source = "hashicorp/random"
-      version = ">= 2.3.0"
+      version = ">= 3.1.3"
     }
     vault = {
       source = "hashicorp/vault"
-      version = "3.3.0"
+      version = "3.5.0"
     }
     elasticsearch = {
       source = "phillbaker/elasticsearch"
-      version = "2.0.0-beta.2"
+      version = "2.0.1"
     }
   }
 }

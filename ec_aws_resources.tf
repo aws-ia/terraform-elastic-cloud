@@ -116,6 +116,24 @@ resource "aws_s3_bucket_public_access_block" "es_s3_agent" {
   ignore_public_acls = true
 }
 
+# S3 upload esf_sar_config file to the bucket
+resource "aws_s3_object" "esf_sar_config" {
+  bucket  = aws_s3_bucket.es_s3_repo.id
+  key     = "config/sar_config.yaml"
+  content = data.template_file.init_sar_config.rendered
+  etag   = md5(data.template_file.init_sar_config.rendered)
+  depends_on = [aws_secretsmanager_secret.es_secrets]
+}
+
+data "template_file" "init_sar_config" {
+  template = file("sar_config.yaml")
+  vars = {
+    sm-es-url  = "${aws_secretsmanager_secret.es_secrets.arn}:es_url"
+    sm-ec-user = "${aws_secretsmanager_secret.es_secrets.arn}:elasticsearch_username"
+    sm-ec-pwd  = "${aws_secretsmanager_secret.es_secrets.arn}:elasticsearch_password"
+  }
+}
+
 # IAM Role
 resource "aws_iam_role" "es_role" {
   name_prefix  = "es_deploy_role"
@@ -214,4 +232,7 @@ resource "aws_serverlessapplicationrepository_cloudformation_stack" "esf_cfn_sta
   application_id   = data.aws_serverlessapplicationrepository_application.esf_app.application_id
   semantic_version = data.aws_serverlessapplicationrepository_application.esf_app.semantic_version
   capabilities     = data.aws_serverlessapplicationrepository_application.esf_app.required_capabilities
+  parameters = {
+    ElasticServerlessForwarderS3ConfigFile = "${aws_s3_bucket.es_s3_repo.bucket_regional_domain_name}/config/sar_config.yaml"
+  }
 }

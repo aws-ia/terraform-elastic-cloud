@@ -1,0 +1,10 @@
+inputs:
+  - type: "s3-sqs"
+    id: "arn:aws:sqs:%REGION%:%ACCOUNT%:%QUEUENAME%"
+    outputs:
+      - type: "elasticsearch"
+        args:
+          elasticsearch_url: ${sm-es-url}
+          username: ${sm-ec-user}
+          password: ${sm-ec-pwd}
+          es_index_or_datastream_name: "logs-generic-default"
