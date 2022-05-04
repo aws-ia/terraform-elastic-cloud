@@ -118,10 +118,10 @@ resource "aws_s3_bucket_public_access_block" "es_s3_agent" {
 
 # S3 upload esf_sar_config file to the bucket
 resource "aws_s3_object" "esf_sar_config" {
-  bucket  = aws_s3_bucket.es_s3_repo.id
-  key     = "config/sar_config.yaml"
-  content = data.template_file.init_sar_config.rendered
-  etag   = md5(data.template_file.init_sar_config.rendered)
+  bucket     = aws_s3_bucket.es_s3_repo.id
+  key        = "config/sar_config.yaml"
+  content    = data.template_file.init_sar_config.rendered
+  etag       = md5(data.template_file.init_sar_config.rendered)
   depends_on = [aws_secretsmanager_secret.es_secrets]
 }
 
