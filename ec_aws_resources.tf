@@ -1,24 +1,24 @@
 locals {
-    aws_account_id = sensitive(data.aws_caller_identity.current.account_id)
+  aws_account_id = sensitive(data.aws_caller_identity.current.account_id)
 }
 
 # SQS
 resource "aws_sqs_queue" "es_queue_deadletter" {
-  name = "es_queue_deadletter"
-  sqs_managed_sse_enabled = true
-  delay_seconds = 90
-  max_message_size = 2048
+  name                      = "es_queue_deadletter"
+  delay_seconds             = 90
+  max_message_size          = 2048
   message_retention_seconds = 86400
   receive_wait_time_seconds = 10
+  kms_master_key_id         = aws_kms_alias.aka.name
 }
 
 resource "aws_sqs_queue" "es_queue" {
-  name = "es_queue"
-  sqs_managed_sse_enabled = true
-  delay_seconds = 90
-  max_message_size = 2048
+  name                      = "es_queue"
+  delay_seconds             = 90
+  max_message_size          = 2048
   message_retention_seconds = 86400
   receive_wait_time_seconds = 10
+  kms_master_key_id         = aws_kms_alias.aka.name
 
   redrive_policy = jsonencode({
     deadLetterTargetArn = aws_sqs_queue.es_queue_deadletter.arn
@@ -43,6 +43,30 @@ resource "aws_s3_bucket" "es_s3_repo" {
   }
 }
 
+resource "aws_s3_bucket_logging" "es_s3_repo_logging" {
+  bucket        = aws_s3_bucket.es_s3_repo.id
+  target_bucket = aws_s3_bucket.es_s3_logging.id
+  target_prefix = "log/"
+}
+
+resource "aws_s3_bucket_versioning" "es_s3_repo_versioning" {
+  bucket = aws_s3_bucket.es_s3_repo.id
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "es_s3_repo_encryption" {
+  bucket = aws_s3_bucket.es_s3_repo.id
+
+  rule {
+    apply_server_side_encryption_by_default {
+      kms_master_key_id = aws_kms_key.akk.arn
+      sse_algorithm     = "aws:kms"
+    }
+  }
+}
+
 # S3 Policy for bucket for Elasticsearch snapshot
 resource "aws_s3_bucket_policy" "es_s3_repo" {
   bucket = aws_s3_bucket.es_s3_repo.id
@@ -55,7 +79,7 @@ resource "aws_s3_bucket_policy" "es_s3_repo" {
       {
         Effect    = "Allow"
         Action    = "s3:*"
-        Principal = {"AWS":"${local.aws_account_id}"}
+        Principal = { "AWS" : "${local.aws_account_id}" }
         Resource = [
           aws_s3_bucket.es_s3_repo.arn,
           "${aws_s3_bucket.es_s3_repo.arn}/*",
@@ -67,11 +91,11 @@ resource "aws_s3_bucket_policy" "es_s3_repo" {
 
 # S3 public access block for Elasticsearch snapshot
 resource "aws_s3_bucket_public_access_block" "es_s3_repo" {
-  bucket = aws_s3_bucket.es_s3_repo.id
-  block_public_acls = true
-  block_public_policy = true
+  bucket                  = aws_s3_bucket.es_s3_repo.id
+  block_public_acls       = true
+  block_public_policy     = true
   restrict_public_buckets = true
-  ignore_public_acls = true
+  ignore_public_acls      = true
 }
 
 # S3 Bucket for Elastic Agent
@@ -82,6 +106,30 @@ resource "aws_s3_bucket" "es_s3_agent" {
   tags = {
     Name        = "Bucket for Elastic Agent"
     Environment = "Development"
+  }
+}
+
+resource "aws_s3_bucket_logging" "es_s3_agent_logging" {
+  bucket        = aws_s3_bucket.es_s3_agent.id
+  target_bucket = aws_s3_bucket.es_s3_logging.id
+  target_prefix = "log/"
+}
+
+resource "aws_s3_bucket_versioning" "es_s3_agent_versioning" {
+  bucket = aws_s3_bucket.es_s3_agent.id
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "es_s3_agent_encryption" {
+  bucket = aws_s3_bucket.es_s3_agent.id
+
+  rule {
+    apply_server_side_encryption_by_default {
+      kms_master_key_id = aws_kms_key.akk.arn
+      sse_algorithm     = "aws:kms"
+    }
   }
 }
 
@@ -97,7 +145,7 @@ resource "aws_s3_bucket_policy" "es_s3_agent" {
       {
         Effect    = "Allow"
         Action    = "s3:*"
-        Principal = {"AWS":"${local.aws_account_id}"}
+        Principal = { "AWS" : "${local.aws_account_id}" }
         Resource = [
           aws_s3_bucket.es_s3_agent.arn,
           "${aws_s3_bucket.es_s3_agent.arn}/*",
@@ -109,14 +157,14 @@ resource "aws_s3_bucket_policy" "es_s3_agent" {
 
 # S3 public access block for Elastic Agent
 resource "aws_s3_bucket_public_access_block" "es_s3_agent" {
-  bucket = aws_s3_bucket.es_s3_agent.id
-  block_public_acls = true
-  block_public_policy = true
+  bucket                  = aws_s3_bucket.es_s3_agent.id
+  block_public_acls       = true
+  block_public_policy     = true
   restrict_public_buckets = true
-  ignore_public_acls = true
+  ignore_public_acls      = true
 }
 
-# S3 upload esf_sar_config file to the bucket
+# S3 upload sar_config file to the bucket
 resource "aws_s3_object" "esf_sar_config" {
   bucket     = aws_s3_bucket.es_s3_repo.id
   key        = "config/sar_config.yaml"
@@ -134,9 +182,45 @@ data "template_file" "init_sar_config" {
   }
 }
 
+# S3 for logging
+resource "aws_s3_bucket" "es_s3_logging" {
+  bucket_prefix = var.log_s3_bucket_prefix
+}
+
+resource "aws_s3_bucket_acl" "es_s3_logging_acl" {
+  bucket = aws_s3_bucket.es_s3_logging.id
+  acl    = "log-delivery-write"
+}
+
+resource "aws_s3_bucket_versioning" "es_s3_logging_versioning" {
+  bucket = aws_s3_bucket.es_s3_logging.id
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "es_s3_logging_encryption" {
+  bucket = aws_s3_bucket.es_s3_logging.id
+
+  rule {
+    apply_server_side_encryption_by_default {
+      kms_master_key_id = aws_kms_key.akk.arn
+      sse_algorithm     = "aws:kms"
+    }
+  }
+}
+
+resource "aws_s3_bucket_public_access_block" "es_s3_logging" {
+  bucket                  = aws_s3_bucket.es_s3_logging.id
+  block_public_acls       = true
+  block_public_policy     = true
+  restrict_public_buckets = true
+  ignore_public_acls      = true
+}
+
 # IAM Role
 resource "aws_iam_role" "es_role" {
-  name_prefix  = "es_deploy_role"
+  name_prefix        = "es_deploy_role"
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -170,40 +254,44 @@ data "aws_caller_identity" "current" {}
 
 # EC2 Instance
 resource "aws_instance" "ec2_instance" {
-    ami                         = coalesce(var.ami, data.aws_ami.ubuntu.id)
-    instance_type               = var.instance_type
-    key_name                    = var.key_name
-    availability_zone           = var.availability_zone
-    subnet_id                   = var.subnet_id
-    vpc_security_group_ids      = var.vpc_security_group_ids
-    user_data                   = coalesce(var.user_data, data.template_file.install_elastic_agent.rendered)
-    associate_public_ip_address = var.associate_public_ip_address
+  ami                         = coalesce(var.ami, data.aws_ami.ubuntu.id)
+  instance_type               = var.instance_type
+  key_name                    = var.key_name
+  availability_zone           = var.availability_zone
+  subnet_id                   = var.subnet_id
+  vpc_security_group_ids      = var.vpc_security_group_ids
+  user_data                   = coalesce(var.user_data, data.template_file.install_elastic_agent.rendered)
+  associate_public_ip_address = var.associate_public_ip_address
 
-    metadata_options {
-        http_endpoint               = "enabled"
-        http_put_response_hop_limit = 1
-        http_tokens                 = "required"
+  metadata_options {
+    http_endpoint               = "enabled"
+    http_put_response_hop_limit = 1
+    http_tokens                 = "required"
+  }
+
+  dynamic "root_block_device" {
+    for_each = var.root_block_device
+    content {
+      delete_on_termination = lookup(root_block_device.value, "delete_on_termination", null)
+      encrypted             = lookup(root_block_device.value, "encrypted", null)
+      iops                  = lookup(root_block_device.value, "iops", null)
+      kms_key_id            = lookup(root_block_device.value, "kms_key_id", null)
+      volume_size           = lookup(root_block_device.value, "volume_size", null)
+      volume_type           = lookup(root_block_device.value, "volume_type", null)
+      throughput            = lookup(root_block_device.value, "throughput", null)
+      tags                  = lookup(root_block_device.value, "tags", null)
     }
+  }
 
-    dynamic "root_block_device" {
-        for_each = var.root_block_device
-        content {
-        delete_on_termination = lookup(root_block_device.value, "delete_on_termination", null)
-        encrypted             = lookup(root_block_device.value, "encrypted", null)
-        iops                  = lookup(root_block_device.value, "iops", null)
-        kms_key_id            = lookup(root_block_device.value, "kms_key_id", null)
-        volume_size           = lookup(root_block_device.value, "volume_size", null)
-        volume_type           = lookup(root_block_device.value, "volume_type", null)
-        throughput            = lookup(root_block_device.value, "throughput", null)
-        tags                  = lookup(root_block_device.value, "tags", null)
-        }
-    }
+  root_block_device {
+    encrypted = true
+  }
 
-    tags                      = merge({ "Name" = var.ec2_name }, var.tags)
+  tags = merge({ "Name" = var.ec2_name }, var.tags)
 }
 
 data "template_file" "install_elastic_agent" {
-  template   = file("install_elastic_agent.sh")
+  template = file("install_elastic_agent.sh")
 }
 
 data "aws_ami" "ubuntu" {

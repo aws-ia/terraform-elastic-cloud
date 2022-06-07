@@ -8,19 +8,19 @@ terraform {
       version = ">= 0.4.0"
     }
     aws = {
-      source = "hashicorp/aws"
+      source  = "hashicorp/aws"
       version = ">= 4.12.1"
     }
     random = {
-      source = "hashicorp/random"
+      source  = "hashicorp/random"
       version = ">= 3.1.3"
     }
     vault = {
-      source = "hashicorp/vault"
+      source  = "hashicorp/vault"
       version = "3.5.0"
     }
     elasticsearch = {
-      source = "phillbaker/elasticsearch"
+      source  = "phillbaker/elasticsearch"
       version = "2.0.1"
     }
   }

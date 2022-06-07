@@ -9,15 +9,15 @@ resource "random_id" "id" {
 
 # Add an access key to Elastic Cloud keystore to access a snapshot S3 bucket (if s3 access key is provided)
 resource "ec_deployment_elasticsearch_keystore" "access_key" {
-  count = local.aws_access_key != null ? 1 : 0
+  count         = local.aws_access_key != null ? 1 : 0
   deployment_id = ec_deployment.ec_minimal.id
   setting_name  = "s3.client.default.access_key"
-  value         =  local.aws_access_key
+  value         = local.aws_access_key
 }
 
 # Add a secret key to Elastic Cloud keystore to access a snapshot S3 bucket (if s3 access key is provided)
 resource "ec_deployment_elasticsearch_keystore" "secret_key" {
-  count = local.aws_secret_key != null ? 1 : 0
+  count         = local.aws_secret_key != null ? 1 : 0
   deployment_id = ec_deployment.ec_minimal.id
   setting_name  = "s3.client.default.secret_key"
   value         = local.aws_secret_key
@@ -43,7 +43,7 @@ resource "null_resource" "create_snapshot" {
   count = var.local_elasticsearch_url != "" ? 1 : 0
 
   provisioner "local-exec" {
-    command=<<EOT
+    command = <<EOT
 curl -v XPUT "${var.local_elasticsearch_url}/_snapshot/${var.local_elasticsearch_repo_name}/${local.es_snapshot_name}?wait_for_completion=true" -H 'Content-Type: application/json' -d '
 {
   "indices": "*",
@@ -62,7 +62,7 @@ resource "null_resource" "create_cloud_repo" {
   count = var.local_elasticsearch_url != "" ? 1 : 0
 
   provisioner "local-exec" {
-    command=<<EOT
+    command = <<EOT
 curl -v XPUT -u ${ec_deployment.ec_minimal.elasticsearch_username}:${ec_deployment.ec_minimal.elasticsearch_password}  "${ec_deployment.ec_minimal.elasticsearch[0].https_endpoint}/_snapshot/${var.local_elasticsearch_repo_name}" -H 'Content-Type: application/json' -d '
 {
   "type": "s3",
@@ -93,7 +93,7 @@ resource "null_resource" "restore_snapshot" {
 
 # Run REST API
 data "template_file" "run_rest_api" {
-  template   = file("ec_rest_api.sh")
+  template = file("ec_rest_api.sh")
   vars = {
     ec-user     = local.es_credentials.elasticsearch_username
     ec-pwd      = local.es_credentials.elasticsearch_password
