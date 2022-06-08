@@ -91,7 +91,7 @@ resource "null_resource" "restore_snapshot" {
   }
 }
 
-# Run REST API
+# Run REST API to restore a snapshot
 data "template_file" "run_rest_api" {
   template = file("ec_rest_api.sh")
   vars = {
