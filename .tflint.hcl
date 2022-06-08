@@ -12,9 +12,6 @@ config {
   force  = false
 }
 
-rule "terraform_required_providers" {
-  enabled = false
-}
 
 rule "terraform_required_version" {
   enabled = true
@@ -46,7 +43,7 @@ rule "terraform_deprecated_interpolation" {
 }
 
 rule "terraform_documented_outputs" {
-  enabled = false
+  enabled = true
 }
 
 rule "terraform_documented_variables" {

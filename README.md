@@ -274,9 +274,9 @@ No modules.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_apm_https_endpoint"></a> [apm\_https\_endpoint](#output\_apm\_https\_endpoint) | n/a |
-| <a name="output_deployment_id"></a> [deployment\_id](#output\_deployment\_id) | n/a |
-| <a name="output_elasticsearch_cloud_id"></a> [elasticsearch\_cloud\_id](#output\_elasticsearch\_cloud\_id) | n/a |
-| <a name="output_elasticsearch_https_endpoint"></a> [elasticsearch\_https\_endpoint](#output\_elasticsearch\_https\_endpoint) | n/a |
-| <a name="output_kibana_https_endpoint"></a> [kibana\_https\_endpoint](#output\_kibana\_https\_endpoint) | n/a |
+| <a name="output_apm_https_endpoint"></a> [apm\_https\_endpoint](#output\_apm\_https\_endpoint) | APM resource HTTPs endpoint |
+| <a name="output_deployment_id"></a> [deployment\_id](#output\_deployment\_id) | The deployment identifier |
+| <a name="output_elasticsearch_cloud_id"></a> [elasticsearch\_cloud\_id](#output\_elasticsearch\_cloud\_id) | The encoded Elasticsearch credentials to use in Beats or Logstash |
+| <a name="output_elasticsearch_https_endpoint"></a> [elasticsearch\_https\_endpoint](#output\_elasticsearch\_https\_endpoint) | The Elasticsearch resource HTTPs endpoint |
+| <a name="output_kibana_https_endpoint"></a> [kibana\_https\_endpoint](#output\_kibana\_https\_endpoint) | The Kibana resource HTTPs endpoint |
 <!-- END_TF_DOCS -->
