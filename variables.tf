@@ -1,69 +1,68 @@
 variable "apikey" {
-  type = string
+  type        = string
   description = "Elasticsearch Service API Key"
-  sensitive = true
-}
-
-variable "deployment_version" {
-  type = string
-  description = "Elastic Cloud Deployment Version"
-  default = "7.17.0"
+  sensitive   = true
 }
 
 variable "deployment_template_id" {
-  type = string
-  default = "aws-io-optimized-v2"
+  type        = string
+  description = "Deployment template identifier"
+  default     = "aws-io-optimized-v2"
 }
 
 variable "name" {
-  type = string
+  type        = string
   description = "Deployment Name"
 }
 
 variable "region" {
-  type = string
+  type        = string
   description = "AWS Region"
-  default = "us-west-2"
+  default     = "us-west-2"
 }
 
 variable "autoscale" {
-  type = string
-  default = "false"
+  type        = string
+  description = "Enable or disable autoscaling"
+  default     = "false"
 }
 
 variable "zone_count" {
-  type = number
-  default = 1
+  type        = number
+  description = "Number of zones the instance type of the Elasticsearch cluster will span"
+  default     = 1
 }
 
 variable "sourceip" {
-  default = "0.0.0.0/0"
+  default     = "0.0.0.0/0"
+  type        = string
+  description = "traffic filter source"
 }
 
 variable "existing_s3_repo_bucket_name" {
-  type = string
+  type        = string
   description = "Existing S3 bucket name for repository"
-  default = ""
+  default     = ""
 }
 
 variable "s3_client_access_key" {
-  type = string
+  type        = string
   description = "Access Key ID for the S3 repository"
-  default = null
-  sensitive = true
+  default     = null
+  sensitive   = true
 }
 
 variable "s3_client_secret_key" {
-  type = string
+  type        = string
   description = "Secret Access Key for the S3 repository"
-  default = null
-  sensitive = true
+  default     = null
+  sensitive   = true
 }
 
 variable "local_elasticsearch_url" {
-  type = string
+  type        = string
   description = "Migrates self-hosted Elasticsearch data if its URL is provided – e.g., http://127.0.0.1:9200"
-  default = ""
+  default     = ""
 }
 
 variable "local_elasticsearch_repo_name" {
@@ -82,6 +81,18 @@ variable "agent_s3_bucket_prefix" {
   type        = string
   description = "Creates a unique bucket name beginning with the specified prefix"
   default     = "es-s3-agent"
+}
+
+variable "log_s3_bucket_prefix" {
+  type        = string
+  description = "Creates a unique bucket name beginning with the specified prefix"
+  default     = "es-s3-logging"
+}
+
+variable "kms_key_id" {
+  description = "KMS Key ID"
+  type        = string
+  default     = null
 }
 
 # EC2
@@ -140,9 +151,9 @@ variable "root_block_device" {
 }
 
 variable "ec2_name" {
-  type = string
+  type        = string
   description = "EC2 Name"
-  default = "single-instance"
+  default     = "single-instance"
 }
 
 variable "tags" {
