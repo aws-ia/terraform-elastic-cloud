@@ -292,6 +292,13 @@ resource "aws_instance" "ec2_instance" {
 
 data "template_file" "install_elastic_agent" {
   template = file("install_elastic_agent.sh")
+  vars = {
+    ELASTICSEARCH_USERNAME = ec_deployment.ec_minimal.elasticsearch_username
+    ELASTICSEARCH_PASSWORD = ec_deployment.ec_minimal.elasticsearch_password
+    KIBANA_URL             = ec_deployment.ec_minimal.kibana[0].https_endpoint
+    DeploymentID           = ec_deployment.ec_minimal.id
+    DeploymentVersion      = ec_deployment.ec_minimal.version
+  }
 }
 
 data "aws_ami" "ubuntu" {
